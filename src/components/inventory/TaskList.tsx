@@ -9,18 +9,19 @@ interface TaskListProps {
   onFocus: (taskId: string) => void;
 }
 
+/** Open tasks ordered by gravity (heaviest first), completed ones below. */
 export function TaskList({ tasks, now, onFocus }: TaskListProps) {
   const open = tasks.filter((t) => t.status !== 'completed').sort(byGravityDesc(now));
   const done = tasks.filter((t) => t.status === 'completed');
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       {open.length === 0 ? (
-        <p className="rounded-3xl border border-dashed border-edge p-6 text-center text-sm text-mute">
-          Slot vacío. Nada orbita aquí ahora mismo.
+        <p className="rounded-[22px] bg-raised p-6 text-center text-[14px] text-sub">
+          Slot vacío. Nada pendiente aquí.
         </p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-2">
           <AnimatePresence initial={false}>
             {open.map((t) => (
               <TaskCard key={t.id} task={t} now={now} onFocus={onFocus} />
@@ -30,10 +31,8 @@ export function TaskList({ tasks, now, onFocus }: TaskListProps) {
       )}
       {done.length > 0 && (
         <section>
-          <h4 className="mb-2 font-display text-[10px] tracking-[0.2em] text-dim">
-            COMPLETADAS · {done.length}
-          </h4>
-          <ul className="flex flex-col gap-2">
+          <h4 className="mb-1 px-1 text-[12px] font-medium text-faint">Completadas · {done.length}</h4>
+          <ul className="flex flex-col">
             {done.map((t) => (
               <TaskCard key={t.id} task={t} now={now} onFocus={onFocus} />
             ))}

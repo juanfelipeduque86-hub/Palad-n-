@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import type { Task } from '../../types';
-import { effectiveGravity, idleLabel, isPulsing } from '../../lib/gravity';
-import { PixelIcon } from '../ui/PixelIcon';
+import { effectiveGravity, idleLabel } from '../../lib/gravity';
+import { Icon } from '../ui/Icon';
 import { PriorityPips } from '../ui/PriorityPips';
-import { springSnappy } from '../../lib/motion';
+import { press } from '../../lib/motion';
 
 interface TaskCardProps {
   task: Task;
@@ -11,77 +11,57 @@ interface TaskCardProps {
   onFocus: (taskId: string) => void;
 }
 
-/**
- * Visual weight follows gravity: heavier tasks sit closer to the center
- * (less orbital offset), with brighter borders and a calm pulse.
- */
+/** Heavier (high-gravity) tasks get a discreet lavender "en foco" tag — no pulsing. */
 export function TaskCard({ task, now, onFocus }: TaskCardProps) {
   const done = task.status === 'completed';
-  const g = effectiveGravity(task, now);
-  const pulse = isPulsing(task, now);
-  const orbit = done ? 0 : Math.round(((100 - g) / 100) * 28);
-  const heavy = g >= 70;
+  const heavy = !done && effectiveGravity(task, now) >= 75;
 
   return (
     <motion.li
       layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: done ? 0.45 : 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={springSnappy}
-      style={{ marginLeft: orbit }}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
     >
       <motion.button
         type="button"
         disabled={done}
         onClick={() => onFocus(task.id)}
         whileTap={done ? undefined : { scale: 0.98 }}
-        transition={springSnappy}
-        aria-label={done ? `${task.title} (completada)` : `Enfocar: ${task.title}`}
-        className={`group relative w-full rounded-3xl border bg-surface/60 p-4 text-left ${
-          done
-            ? 'border-edge'
-            : heavy
-              ? 'border-white/80 bg-surface'
-              : g >= 45
-                ? 'border-white/25 hover:border-white/50'
-                : 'border-edge hover:border-white/30'
+        transition={press}
+        aria-label={done ? `${task.title} (completada)` : `Empezar: ${task.title}`}
+        className={`flex w-full items-center gap-3 rounded-[22px] text-left ${done ? 'px-4 py-3' : 'p-4'} transition-colors duration-200 ${
+          done ? 'bg-transparent' : 'bg-raised hover:bg-track'
         }`}
       >
-        {pulse && (
-          <motion.span
-            aria-hidden="true"
-            className="pointer-events-none absolute -inset-[3px] rounded-[1.65rem] border border-white"
-            animate={{ opacity: [0, 0.35, 0], scale: [0.995, 1.012, 0.995] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        )}
-        <div className="flex items-start gap-3">
-          <span
-            className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-lg border ${
-              done ? 'border-white bg-white text-ink' : 'border-mute/60 text-transparent'
-            }`}
-          >
-            <PixelIcon name="check" size={14} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3
-              className={`text-[15px] leading-snug ${heavy && !done ? 'font-bold' : 'font-semibold'} ${
-                done ? 'line-through decoration-mute' : ''
-              }`}
-            >
-              {task.title}
-            </h3>
-            <p className="mt-1 line-clamp-2 text-[13px] leading-snug text-mute">{task.description}</p>
-            <div className="mt-3 flex items-center gap-3 text-[11px] text-dim">
-              <PriorityPips priority={task.priority} />
-              <span className="font-display tracking-wider">G{g}</span>
-              <span>
-                {done ? 'completada' : task.status === 'skipped' ? `pospuesta · ${idleLabel(task, now)}` : `en órbita · ${idleLabel(task, now)}`}
+        <div className="min-w-0 flex-1">
+          <div className={`flex items-center gap-2 ${done ? 'hidden' : ''}`}>
+            {heavy && (
+              <span className="inline-flex h-5 items-center rounded-full bg-lav/15 px-2 text-[11px] font-medium text-lav">
+                En foco
               </span>
-              <span className="ml-auto font-display text-[11px] text-white">+{task.expReward}</span>
-            </div>
+            )}
+            {task.status === 'skipped' && <span className="text-[11px] text-faint">Pospuesta</span>}
           </div>
+          <h3
+            className={`text-[15px] leading-snug font-semibold ${done ? 'text-faint line-through' : 'mt-1'}`}
+          >
+            {task.title}
+          </h3>
+          {!done && <p className="mt-0.5 line-clamp-1 text-[13px] text-sub">{task.description}</p>}
+          {!done && (
+            <div className="mt-2.5 flex items-center gap-3 text-[12px] text-faint">
+              <PriorityPips priority={task.priority} />
+              <span>Sin tocar · {idleLabel(task, now)}</span>
+            </div>
+          )}
+        </div>
+        <div className={`flex shrink-0 items-end gap-2 ${done ? 'flex-row items-center' : 'flex-col'}`}>
+          <span className={`text-[13px] font-semibold tabular-nums ${done ? 'text-faint' : 'text-mint'}`}>
+            +{task.expReward}
+          </span>
+          <Icon name={done ? 'check' : 'arrow'} size={18} className={done ? 'text-mint' : 'text-faint'} />
         </div>
       </motion.button>
     </motion.li>

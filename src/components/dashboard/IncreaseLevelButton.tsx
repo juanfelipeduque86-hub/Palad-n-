@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { PixelIcon } from '../ui/PixelIcon';
+import { Icon } from '../ui/Icon';
+import { press } from '../../lib/motion';
 import { tick } from '../../lib/haptics';
 
 interface IncreaseLevelButtonProps {
@@ -7,40 +8,34 @@ interface IncreaseLevelButtonProps {
   disabled: boolean;
 }
 
+/** Primary action: wide mint capsule with an integrated dark play control. */
 export function IncreaseLevelButton({ onPress, disabled }: IncreaseLevelButtonProps) {
   return (
     <motion.button
       type="button"
       disabled={disabled}
       onClick={() => {
-        tick(12);
+        tick(10);
         onPress();
       }}
-      initial={false}
-      animate={{ y: 0, boxShadow: disabled ? '0 0px 0 0 #2c2c2c' : '0 6px 0 0 #8c8c8c' }}
-      whileHover={disabled ? undefined : { y: -2, boxShadow: '0 8px 0 0 #8c8c8c' }}
-      whileTap={disabled ? undefined : { y: 5, scale: 0.985, boxShadow: '0 1px 0 0 #8c8c8c' }}
-      transition={{ type: 'spring', stiffness: 700, damping: 30 }}
-      className="group relative flex h-[84px] w-full items-center justify-between overflow-hidden rounded-3xl border-2 border-white bg-white px-6 text-ink disabled:border-edge disabled:bg-surface disabled:text-dim"
+      whileTap={disabled ? undefined : { scale: 0.975 }}
+      transition={press}
+      className="flex h-16 w-full items-center gap-3 rounded-full bg-mint pr-2 pl-6 text-mint-ink shadow-mint transition-colors duration-200 hover:bg-mint-strong disabled:bg-raised disabled:text-faint disabled:shadow-none"
     >
-      {!disabled && (
-        <motion.span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 -left-12 w-10 skew-x-[-20deg] bg-ink/[0.05]"
-          animate={{ x: ['0%', '1400%'] }}
-          transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 2.2, ease: 'easeInOut' }}
-        />
-      )}
-      <span className="flex flex-col items-start">
-        <span className="font-display text-[22px] leading-none font-bold tracking-[0.04em]">
-          {disabled ? 'INVENTORY CLEAR' : 'INCREASE LEVEL'}
+      <span className="flex min-w-0 flex-1 flex-col items-start">
+        <span className="text-[16px] leading-tight font-bold tracking-[0.08em]">
+          {disabled ? 'INVENTARIO VACÍO' : 'INCREASE LEVEL'}
         </span>
-        <span className="mt-1.5 text-[12px] font-medium opacity-60">
-          {disabled ? 'Todas las quests completas. Descansa.' : 'Una sola quest. Sin decidir.'}
+        <span className="text-[12px] font-medium opacity-70">
+          {disabled ? 'Todas las quests completas' : 'Una sola quest, sin decidir'}
         </span>
       </span>
-      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-ink text-white transition-transform group-active:translate-x-0.5">
-        <PixelIcon name={disabled ? 'check' : 'arrow'} size={18} />
+      <span
+        className={`grid h-12 w-12 shrink-0 place-items-center rounded-full ${
+          disabled ? 'bg-card text-faint' : 'bg-mint-ink text-mint'
+        }`}
+      >
+        <Icon name={disabled ? 'check' : 'play'} size={20} filled={!disabled} />
       </span>
     </motion.button>
   );

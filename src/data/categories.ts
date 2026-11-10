@@ -4,17 +4,17 @@ export const CATEGORIES: Record<TaskCategory, CategoryMeta> = {
   combat: {
     id: 'combat',
     label: 'Combat',
-    tagline: 'Alta concentración. Una ofensiva a la vez.',
+    tagline: 'Concentración profunda',
   },
   potions: {
     id: 'potions',
     label: 'Potions',
-    tagline: 'Mantenimiento rápido. Bébelas y sigue.',
+    tagline: 'Mantenimiento rápido',
   },
   keys: {
     id: 'keys',
     label: 'Keys',
-    tagline: 'Transiciones y descansos que abren la siguiente puerta.',
+    tagline: 'Transiciones y descansos',
   },
 };
 

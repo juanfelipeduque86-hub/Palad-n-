@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import type { Task } from '../../types';
 import { CATEGORIES } from '../../data/categories';
 import { CATEGORY_ICON } from '../inventory/categoryIcon';
-import { PixelIcon } from '../ui/PixelIcon';
+import { Icon } from '../ui/Icon';
+import { IconButton } from '../ui/IconButton';
 import { PriorityPips } from '../ui/PriorityPips';
-import { springSnappy } from '../../lib/motion';
+import { press, springSnappy } from '../../lib/motion';
 import { tick } from '../../lib/haptics';
 
-const FEEDBACK_MS = 420;
+const FEEDBACK_MS = 480;
 
 interface FocusTunnelProps {
   task: Task | null;
@@ -17,14 +18,13 @@ interface FocusTunnelProps {
   onClose: () => void;
 }
 
-/**
- * Focus Tunnel: everything else fades away, one atomic quest remains.
- * Rendered whenever `task` is non-null.
- */
+/** Focus Tunnel: the dashboard recedes, one atomic quest remains. */
 export function FocusTunnel({ task, onComplete, onSkip, onClose }: FocusTunnelProps) {
   return (
     <AnimatePresence>
-      {task && <TunnelView key={task.id} task={task} onComplete={onComplete} onSkip={onSkip} onClose={onClose} />}
+      {task && (
+        <TunnelView key={task.id} task={task} onComplete={onComplete} onSkip={onSkip} onClose={onClose} />
+      )}
     </AnimatePresence>
   );
 }
@@ -47,134 +47,103 @@ function TunnelView({ task, onComplete, onSkip, onClose }: FocusTunnelProps & { 
     return () => window.clearTimeout(id);
   }, [phase, onComplete, task.id]);
 
-  const handleComplete = () => {
-    if (phase !== 'focus') return;
-    tick([10, 40, 18]);
-    setPhase('done');
-  };
-
-  const handleSkip = () => {
-    if (phase !== 'focus') return;
-    tick(6);
-    onSkip(task.id);
-  };
-
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center px-5"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="focus-title"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.22 } }}
-      transition={{ duration: 0.18 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+      transition={{ duration: 0.2 }}
     >
-      {/* The world dims and blurs away */}
-      <motion.div
-        className="absolute inset-0 bg-ink/85"
-        initial={{ backdropFilter: 'blur(0px)' }}
-        animate={{ backdropFilter: 'blur(14px)' }}
-        exit={{ backdropFilter: 'blur(0px)' }}
-        transition={{ duration: 0.22 }}
-      />
-      <div className="pointer-events-none absolute inset-0 scanlines" />
-
-      {/* Tunnel rings converging on the quest */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-        {[0, 1, 2, 3].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute aspect-[3/4] w-[78%] max-w-[360px] rounded-[2.5rem] border border-white"
-            initial={{ scale: 2.4, opacity: 0 }}
-            animate={{ scale: 1.08 + i * 0.16, opacity: 0.16 - i * 0.035 }}
-            transition={{ ...springSnappy, delay: i * 0.03 }}
-          />
-        ))}
-      </div>
+      <div className="absolute inset-0 bg-bg/85 backdrop-blur-[6px]" />
 
       <motion.section
-        className="relative w-full max-w-[380px] rounded-[2rem] border-2 border-white bg-ink p-6 shadow-island"
-        initial={{ scale: 0.86, y: 24, opacity: 0, filter: 'blur(6px)' }}
-        animate={
-          phase === 'done'
-            ? { scale: [1, 1.04, 0.98], y: 0, opacity: 1, filter: 'blur(0px)' }
-            : { scale: 1, y: 0, opacity: 1, filter: 'blur(0px)' }
-        }
-        exit={{ scale: 0.9, y: 30, opacity: 0, filter: 'blur(6px)', transition: { duration: 0.2 } }}
-        transition={phase === 'done' ? { duration: 0.3 } : springSnappy}
+        className="relative w-full max-w-[380px] rounded-[32px] bg-card p-5 shadow-float"
+        initial={{ y: 24, opacity: 0, scale: 0.97 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 16, opacity: 0, scale: 0.98, transition: { duration: 0.18 } }}
+        transition={springSnappy}
       >
-        <div className="flex items-center justify-between">
-          <span className="flex items-center gap-2 font-display text-[10px] tracking-[0.25em] text-mute uppercase">
-            <PixelIcon name={CATEGORY_ICON[task.category]} size={14} className="text-white" />
-            {meta.label} · micro-quest
+        <div className="flex items-center gap-3">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-raised">
+            <Icon name={CATEGORY_ICON[task.category]} size={19} />
           </span>
-          <PriorityPips priority={task.priority} />
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-semibold">{meta.label}</p>
+            <p className="text-[12px] text-sub">Micro-quest</p>
+          </div>
+          <IconButton icon="close" label="Volver sin cambios" onClick={onClose} size="sm" />
         </div>
 
-        <div className="relative mt-7 min-h-[148px]">
+        <div className="relative mt-6 min-h-[132px]">
           <AnimatePresence mode="wait" initial={false}>
             {phase === 'focus' ? (
-              <motion.div
-                key="quest"
-                exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-                transition={{ duration: 0.14 }}
-              >
-                <h2 id="focus-title" className="font-display text-[26px] leading-[1.15] font-bold">
+              <motion.div key="quest" exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.14 }}>
+                <h2 id="focus-title" className="text-[24px] leading-[1.2] font-semibold tracking-[-0.01em]">
                   {task.title}
                 </h2>
-                <p className="mt-3 text-[15px] leading-relaxed text-mute">{task.description}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-sub">{task.description}</p>
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="inline-flex h-8 items-center rounded-full bg-mint/12 px-3 text-[13px] font-semibold text-mint">
+                    +{task.expReward} EXP
+                  </span>
+                  <PriorityPips priority={task.priority} />
+                </div>
               </motion.div>
             ) : (
               <motion.div
                 key="done"
-                className="flex flex-col items-center justify-center pt-2 text-center"
-                initial={{ opacity: 0, scale: 0.6 }}
+                className="flex flex-col items-center justify-center pt-3 text-center"
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 600, damping: 18 }}
+                transition={{ type: 'spring', stiffness: 520, damping: 26 }}
               >
-                <span className="grid h-16 w-16 place-items-center rounded-2xl bg-white text-ink">
-                  <PixelIcon name="check" size={32} />
+                <span className="grid h-16 w-16 place-items-center rounded-full bg-mint text-mint-ink">
+                  <Icon name="check" size={28} />
                 </span>
-                <span className="mt-4 font-display text-3xl font-bold">+{task.expReward} EXP</span>
-                <span className="mt-1 text-sm text-mute">Quest completada.</span>
+                <span className="mt-4 text-[24px] font-semibold text-mint">+{task.expReward} EXP</span>
+                <span className="mt-0.5 text-[13px] text-sub">Quest completada</span>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="mt-6 flex items-center justify-between border-t border-edge pt-4 text-[12px] text-mute">
-          <span>Recompensa</span>
-          <span className="font-display text-sm text-white">+{task.expReward} EXP</span>
-        </div>
-
-        <div className="mt-5 flex flex-col gap-3">
+        <div className="mt-6 flex flex-col gap-2">
           <motion.button
             type="button"
-            onClick={handleComplete}
+            onClick={() => {
+              if (phase !== 'focus') return;
+              tick([10, 40, 16]);
+              setPhase('done');
+            }}
             disabled={phase !== 'focus'}
-            whileTap={{ scale: 0.97, y: 3 }}
-            whileHover={{ y: -1 }}
-            transition={springSnappy}
-            className="h-16 w-full rounded-2xl bg-white font-display text-xl font-bold tracking-[0.1em] text-ink shadow-[0_5px_0_0_#8c8c8c] active:shadow-[0_1px_0_0_#8c8c8c] disabled:opacity-90"
+            whileTap={{ scale: 0.975 }}
+            transition={press}
             autoFocus
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-mint text-[15px] font-bold tracking-[0.08em] text-mint-ink shadow-mint transition-colors hover:bg-mint-strong"
           >
+            <Icon name="check" size={19} />
             COMPLETE
           </motion.button>
           <motion.button
             type="button"
-            onClick={handleSkip}
+            onClick={() => {
+              if (phase !== 'focus') return;
+              tick(5);
+              onSkip(task.id);
+            }}
             disabled={phase !== 'focus'}
-            whileTap={{ scale: 0.97 }}
-            transition={springSnappy}
-            className="h-12 w-full rounded-2xl border border-edge font-display text-sm tracking-[0.2em] text-mute hover:border-white/40 hover:text-white disabled:opacity-40"
+            whileTap={{ scale: 0.975 }}
+            transition={press}
+            className="h-12 w-full rounded-full bg-raised text-[14px] font-semibold tracking-[0.08em] text-sub transition-colors hover:bg-track hover:text-text disabled:opacity-50"
           >
             SKIP
           </motion.button>
         </div>
-        <p className="mt-3 text-center text-[11px] text-dim">
-          Saltar no resta nada. Volverá cuando estés listo.
-        </p>
+        <p className="mt-3 text-center text-[12px] text-faint">Saltar no resta nada. Volverá más tarde.</p>
       </motion.section>
     </motion.div>
   );

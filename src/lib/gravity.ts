@@ -14,13 +14,6 @@ export function effectiveGravity(task: Task, now: number): number {
   return Math.round(Math.min(100, task.gravity + PRIORITY_PULL[task.priority] + drift));
 }
 
-export const PULSE_THRESHOLD = 75;
-
-export function isPulsing(task: Task, now: number): boolean {
-  if (task.status === 'completed') return false;
-  return task.priority === 'high' || effectiveGravity(task, now) >= PULSE_THRESHOLD;
-}
-
 export function idleLabel(task: Task, now: number): string {
   return formatSince(Math.max(0, now - toMs(task.lastInteractedAt)));
 }

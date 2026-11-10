@@ -1,22 +1,36 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Strict monochrome palette: Tailwind's default colors are removed. */
   --color-*: initial;
-  --color-white: #ffffff;
-  --color-black: #000000;
-  --color-ink: #080808;
-  --color-surface: #1a1a1a;
-  --color-edge: #2c2c2c;
-  --color-mute: #8c8c8c;
-  --color-dim: #5c5c5c;
   --color-transparent: transparent;
+  --color-black: #000000;
 
-  --font-display: 'Silkscreen', ui-monospace, monospace;
-  --font-sans: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Surfaces */
+  --color-bg: #0b0f0e;
+  --color-card: #151c19;
+  --color-raised: #202a25;
+  --color-line: #27322d;
+  --color-track: #2b3832;
 
-  --shadow-island: 0 24px 48px -12px rgb(0 0 0 / 0.9), 0 2px 0 0 rgb(255 255 255 / 0.04) inset;
-  --shadow-press: 0 6px 0 0 #8c8c8c;
+  /* Text */
+  --color-text: #f4f6f2;
+  --color-sub: #a5b0a9;
+  --color-faint: #6f7b74;
+
+  /* Accents: mint drives actions + progress, lavender only for secondary details */
+  --color-mint: #98edb2;
+  --color-mint-strong: #b4f4c7;
+  --color-mint-ink: #0a1a10;
+  --color-lav: #b8a7e8;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-pixel: 'Silkscreen', ui-monospace, monospace;
+
+  --radius-card: 28px;
+
+  --shadow-card: 0 1px 0 0 rgb(255 255 255 / 0.03) inset, 0 18px 40px -18px rgb(0 0 0 / 0.75);
+  --shadow-float: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 20px 44px -12px rgb(0 0 0 / 0.85);
+  --shadow-mint: 0 10px 28px -12px rgb(152 237 178 / 0.45);
 }
 
 @layer base {
@@ -24,15 +38,16 @@
   body,
   #root {
     min-height: 100%;
-    background: var(--color-ink);
+    background: var(--color-bg);
   }
   body {
     margin: 0;
-    color: var(--color-white);
+    color: var(--color-text);
     font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01', 'tnum';
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
-    overscroll-behavior: none;
+    overscroll-behavior-y: none;
     user-select: none;
     -webkit-user-select: none;
   }
@@ -41,29 +56,14 @@
     touch-action: manipulation;
   }
   :focus-visible {
-    outline: 2px solid var(--color-white);
+    outline: 2px solid var(--color-mint);
     outline-offset: 3px;
   }
 }
 
 @layer utilities {
-  .pixelated {
-    image-rendering: pixelated;
-    shape-rendering: crispEdges;
-  }
-  .dither {
-    background-image: radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px);
-    background-size: 6px 6px;
-  }
-  .scanlines {
-    background-image: repeating-linear-gradient(
-      to bottom,
-      rgb(255 255 255 / 0.025) 0 1px,
-      transparent 1px 3px
-    );
-  }
   .pt-safe {
-    padding-top: max(12px, env(safe-area-inset-top));
+    padding-top: max(14px, env(safe-area-inset-top));
   }
   .pb-safe {
     padding-bottom: max(14px, env(safe-area-inset-bottom));

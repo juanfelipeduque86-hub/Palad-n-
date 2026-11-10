@@ -1,11 +1,13 @@
 import { motion, type Transition } from 'framer-motion';
 import type { PaladinState } from '../../types';
 
-const W = '#FFFFFF';
-const INK = '#080808';
+const W = '#F4F6F2';
+const INK = '#151C19';
+const LAV = '#B8A7E8';
+const FAINT = '#2B3832';
 const LINE = 3;
 
-const stance: Transition = { type: 'spring', stiffness: 220, damping: 18 };
+const stance: Transition = { type: 'spring', stiffness: 200, damping: 24 };
 const fade: Transition = { duration: 0.26, ease: 'easeOut' };
 
 /** Outlined "tube" limb: thick white stroke with an ink core → line-art arm. */
@@ -101,12 +103,6 @@ const HEAD: Record<PaladinState, { y: number; rotate: number; x: number }> = {
   fatigued: { y: 7, rotate: 11, x: 3 },
 };
 
-const BREATH: Record<PaladinState, { amp: number; duration: number }> = {
-  resting: { amp: 1.6, duration: 3.4 },
-  'battle-ready': { amp: 0.9, duration: 1.6 },
-  fatigued: { amp: 2.6, duration: 2.4 },
-};
-
 const STATES: PaladinState[] = ['resting', 'battle-ready', 'fatigued'];
 
 interface PaladinSpriteProps {
@@ -115,7 +111,6 @@ interface PaladinSpriteProps {
 }
 
 export function PaladinSprite({ state, className }: PaladinSpriteProps) {
-  const breath = BREATH[state];
   return (
     <svg
       viewBox="-24 0 256 236"
@@ -125,16 +120,14 @@ export function PaladinSprite({ state, className }: PaladinSpriteProps) {
       fill="none"
     >
       {/* Ground */}
-      <g stroke={W} strokeWidth={2} opacity={0.5}>
-        <path d="M24 218 H176" strokeDasharray="2 5" />
-      </g>
+      <path d="M30 218 H170" stroke={FAINT} strokeWidth={2} strokeLinecap="round" />
       <motion.ellipse
         cx={100}
         cy={218}
         ry={4}
-        fill={W}
+        fill="#000000"
         initial={false}
-        animate={{ rx: state === 'battle-ready' ? 44 : 38, opacity: state === 'fatigued' ? 0.08 : 0.12 }}
+        animate={{ rx: state === 'battle-ready' ? 46 : 40, opacity: 0.35 }}
         transition={stance}
       />
 
@@ -153,11 +146,7 @@ export function PaladinSprite({ state, className }: PaladinSpriteProps) {
         transition={stance}
         style={{ originX: '100px', originY: '160px', transformBox: 'view-box' }}
       >
-        <motion.g
-          key={state}
-          animate={{ y: [0, breath.amp, 0] }}
-          transition={{ duration: breath.duration, repeat: Infinity, ease: 'easeInOut' }}
-        >
+        <g>
           {/* Tabard + torso */}
           <g stroke={W} strokeWidth={LINE} strokeLinejoin="miter" fill={INK}>
             <path d="M82 132 L77 162 H123 L118 132 Z" />
@@ -209,13 +198,13 @@ export function PaladinSprite({ state, className }: PaladinSpriteProps) {
               y={47.5}
               width={27}
               height={3}
-              fill={W}
+              fill={LAV}
               initial={false}
-              animate={{ opacity: state === 'battle-ready' ? 1 : state === 'resting' ? 0.25 : 0 }}
+              animate={{ opacity: state === 'battle-ready' ? 1 : state === 'resting' ? 0.35 : 0 }}
               transition={fade}
             />
           </motion.g>
-        </motion.g>
+        </g>
       </motion.g>
 
       {/* Battle-ready: blade glint */}
@@ -224,14 +213,7 @@ export function PaladinSprite({ state, className }: PaladinSpriteProps) {
         animate={{ opacity: state === 'battle-ready' ? 1 : 0 }}
         transition={fade}
       >
-        <motion.path
-          d="M174 14 V30 M166 22 H182"
-          stroke={W}
-          strokeWidth={2}
-          animate={{ scale: [0.6, 1, 0.6], opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ originX: '174px', originY: '22px', transformBox: 'view-box' }}
-        />
+        <path d="M175 12 V28 M167 20 H183" stroke={LAV} strokeWidth={2} strokeLinecap="round" />
       </motion.g>
 
       {/* Fatigued: rising breath puffs */}
@@ -239,17 +221,12 @@ export function PaladinSprite({ state, className }: PaladinSpriteProps) {
         initial={false}
         animate={{ opacity: state === 'fatigued' ? 1 : 0 }}
         transition={fade}
-        stroke={W}
+        stroke={LAV}
         strokeWidth={2}
         strokeLinecap="round"
       >
         {[0, 1, 2].map((i) => (
-          <motion.path
-            key={i}
-            d={`M${126 + i * 9} ${44 - i * 8} q3 -3 6 0`}
-            animate={{ y: [4, -6], opacity: [0, 0.8, 0] }}
-            transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.5, ease: 'easeOut' }}
-          />
+          <path key={i} d={`M${128 + i * 9} ${46 - i * 8} q3 -3 6 0`} opacity={0.9 - i * 0.25} />
         ))}
       </motion.g>
     </svg>

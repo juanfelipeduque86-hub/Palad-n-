@@ -9,7 +9,7 @@ interface SheetProps {
   children: ReactNode;
 }
 
-/** Bottom sheet with drag-to-dismiss. */
+/** Bottom sheet: discreet slide-in, drag the handle to dismiss. */
 export function Sheet({ open, onClose, labelledBy, children }: SheetProps) {
   const controls = useDragControls();
 
@@ -23,7 +23,7 @@ export function Sheet({ open, onClose, labelledBy, children }: SheetProps) {
   }, [open, onClose]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.y > 110 || info.velocity.y > 600) onClose();
+    if (info.offset.y > 100 || info.velocity.y > 600) onClose();
   };
 
   return (
@@ -33,7 +33,7 @@ export function Sheet({ open, onClose, labelledBy, children }: SheetProps) {
           <motion.button
             type="button"
             aria-label="Cerrar"
-            className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/55"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -44,23 +44,23 @@ export function Sheet({ open, onClose, labelledBy, children }: SheetProps) {
             role="dialog"
             aria-modal="true"
             aria-labelledby={labelledBy}
-            className="relative flex max-h-[86dvh] w-full max-w-[440px] flex-col rounded-t-[2rem] border border-b-0 border-edge bg-ink shadow-island"
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
+            className="relative mx-2 mb-2 flex max-h-[84dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[32px] bg-card shadow-float"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 40, opacity: 0, transition: { duration: 0.16 } }}
             transition={springSnappy}
             drag="y"
             dragListener={false}
             dragControls={controls}
             dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0, bottom: 0.6 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
             onDragEnd={onDragEnd}
           >
             <div
               className="flex cursor-grab touch-none justify-center pt-3 pb-2 active:cursor-grabbing"
               onPointerDown={(e) => controls.start(e)}
             >
-              <span className="h-1 w-10 rounded-full bg-edge" />
+              <span className="h-1 w-9 rounded-full bg-track" />
             </div>
             {children}
           </motion.div>

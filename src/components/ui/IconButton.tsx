@@ -1,0 +1,45 @@
+import { motion } from 'framer-motion';
+import { Icon, type IconName } from './Icon';
+import { press } from '../../lib/motion';
+
+interface IconButtonProps {
+  icon: IconName;
+  label: string;
+  onClick: () => void;
+  /** active = mint fill + dark icon; inactive = raised surface + light icon. */
+  active?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  filledIcon?: boolean;
+  className?: string;
+}
+
+const SIZE = { sm: 'h-9 w-9', md: 'h-11 w-11', lg: 'h-12 w-12' } as const;
+const ICON = { sm: 17, md: 19, lg: 20 } as const;
+
+/** Circular control integrated into cards and capsules. */
+export function IconButton({
+  icon,
+  label,
+  onClick,
+  active = false,
+  size = 'md',
+  filledIcon = false,
+  className = '',
+}: IconButtonProps) {
+  return (
+    <motion.button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      whileTap={{ scale: 0.9 }}
+      transition={press}
+      className={`grid shrink-0 place-items-center rounded-full transition-colors duration-200 ${SIZE[size]} ${
+        active
+          ? 'bg-mint text-mint-ink hover:bg-mint-strong'
+          : 'bg-raised text-text hover:bg-track'
+      } ${className}`}
+    >
+      <Icon name={icon} size={ICON[size]} filled={filledIcon} />
+    </motion.button>
+  );
+}

@@ -1,8 +1,8 @@
 import type { TaskCategory } from '../../types';
-import type { PixelIconName } from '../ui/PixelIcon';
+import type { IconName } from '../ui/Icon';
 
-export const CATEGORY_ICON: Record<TaskCategory, PixelIconName> = {
+export const CATEGORY_ICON: Record<TaskCategory, IconName> = {
   combat: 'sword',
-  potions: 'potion',
+  potions: 'flask',
   keys: 'key',
 };

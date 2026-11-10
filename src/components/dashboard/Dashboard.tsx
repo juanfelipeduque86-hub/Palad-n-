@@ -1,10 +1,12 @@
-import { motion, useAnimationControls } from 'framer-motion';
-import { useEffect } from 'react';
-import type { CompletionEvent, PaladinState, PlayerProgress } from '../../types';
-import { expToNext, levelProgress } from '../../lib/leveling';
-import { StatusTopBar } from './StatusTopBar';
-import { ExperienceBar } from './ExperienceBar';
+import { motion } from 'framer-motion';
+import type { CompletionEvent, PaladinState, PlayerProgress, Task } from '../../types';
+import type { DayActivity } from '../../data/activity';
+import { expToNext } from '../../lib/leveling';
+import { AppHeader } from './AppHeader';
 import { IncreaseLevelButton } from './IncreaseLevelButton';
+import { NextQuestCapsule } from './NextQuestCapsule';
+import { QuestRing } from './QuestRing';
+import { WeeklyActivity } from './WeeklyActivity';
 import { PaladinAvatar } from '../paladin/PaladinAvatar';
 
 interface DashboardProps {
@@ -13,11 +15,15 @@ interface DashboardProps {
   streak: number;
   idleMs: number;
   lastCompletion: CompletionEvent | null;
-  levelUpEventId: number | null;
+  nextTask: Task | null;
+  doneCount: number;
+  totalCount: number;
+  week: DayActivity[];
   receded: boolean;
   canFocus: boolean;
   onIncreaseLevel: () => void;
-  onOpenProfile: () => void;
+  onStartTask: (taskId: string) => void;
+  onOpenSettings: () => void;
 }
 
 export function Dashboard({
@@ -26,47 +32,43 @@ export function Dashboard({
   streak,
   idleMs,
   lastCompletion,
-  levelUpEventId,
+  nextTask,
+  doneCount,
+  totalCount,
+  week,
   receded,
   canFocus,
   onIncreaseLevel,
-  onOpenProfile,
+  onStartTask,
+  onOpenSettings,
 }: DashboardProps) {
-  const shake = useAnimationControls();
-
-  useEffect(() => {
-    if (levelUpEventId === null) return;
-    void shake.start({ x: [0, -5, 5, -3, 3, 0], transition: { duration: 0.32, delay: 0.12 } });
-  }, [levelUpEventId, shake]);
-
   return (
     <motion.main
-      className="mx-auto flex h-dvh min-h-[640px] w-full max-w-[430px] flex-col gap-3 px-4 pt-safe pb-[112px]"
+      className="mx-auto flex w-full max-w-[430px] flex-col gap-3 px-4 pt-safe pb-[128px]"
       initial={false}
-      animate={{
-        scale: receded ? 0.94 : 1,
-        opacity: receded ? 0.35 : 1,
-        filter: receded ? 'blur(6px)' : 'blur(0px)',
-      }}
+      animate={{ scale: receded ? 0.97 : 1, opacity: receded ? 0.4 : 1 }}
       transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
       aria-hidden={receded}
     >
-      <motion.div animate={shake} className="flex min-h-0 flex-1 flex-col gap-3">
-        <StatusTopBar
-          level={player.level}
-          progress={levelProgress(player)}
-          streak={streak}
-          onOpenProfile={onOpenProfile}
-        />
-        <PaladinAvatar state={paladinState} streak={streak} idleMs={idleMs} />
-        <ExperienceBar
-          level={player.level}
-          exp={player.exp}
-          expToNext={expToNext(player.level)}
-          lastCompletion={lastCompletion}
-        />
-      </motion.div>
-      <IncreaseLevelButton onPress={onIncreaseLevel} disabled={!canFocus} />
+      <AppHeader level={player.level} onOpenSettings={onOpenSettings} />
+      <PaladinAvatar
+        state={paladinState}
+        streak={streak}
+        idleMs={idleMs}
+        level={player.level}
+        exp={player.exp}
+        expToNext={expToNext(player.level)}
+        expGainKey={lastCompletion?.id ?? null}
+        expGained={lastCompletion?.expGained ?? 0}
+      />
+      <NextQuestCapsule task={nextTask} onStart={onStartTask} />
+      <div className="grid grid-cols-2 gap-3">
+        <QuestRing done={doneCount} total={totalCount} />
+        <WeeklyActivity days={week} />
+      </div>
+      <div className="pt-1">
+        <IncreaseLevelButton onPress={onIncreaseLevel} disabled={!canFocus} />
+      </div>
     </motion.main>
   );
 }
