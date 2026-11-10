@@ -7,38 +7,36 @@
   --color-white: #ffffff;
   --color-black: #000000;
 
-  /* Surfaces: matte, mostly opaque. */
-  --color-bg: #f4f3ef;
-  --color-card: #faf9f6;
-  --color-raised: #eae7e0;
-  --color-line: rgb(25 25 25 / 0.12);
-  --color-line-strong: rgb(25 25 25 / 0.28);
-  --color-track: #dddad2;
+  /* Dark fantasy HUD skin: deep black, carved stone, forged metal. */
+  --color-bg: #0a0a0c;
+  --color-card: #14141a;
+  --color-raised: #1d1d25;
+  --color-line: #2a2a35;
+  --color-line-strong: #5a4f2e;
+  --color-track: #2a2a35;
 
-  /* Ink. */
-  --color-text: #191919;
-  --color-sub: #59564f;
-  --color-faint: #8a867d;
+  /* Pale parchment ink. */
+  --color-text: #d1c7bd;
+  --color-sub: #9c9287;
+  --color-faint: #6f685f;
 
-  /* Actions are ink on paper. */
-  --color-accent: #191919;
-  --color-accent-strong: #000000;
-  --color-accent-ink: #faf9f6;
+  /* Actions in old gold. */
+  --color-accent: #d4af37;
+  --color-accent-strong: #e8c95a;
+  --color-accent-ink: #0a0a0c;
 
   /* Gameplay indicators (always paired with a label or symbol). */
-  --color-accent-soft: #dfe8df;
-  --color-ok: #2f6b4f;
-  --color-lav: #5f5299;
-  --color-gold: #8a6717;
+  --color-accent-soft: #16240f;
+  --color-ok: #7ec850;
+  --color-lav: #7f9fe0;
+  --color-gold: #d4af37;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
-  /* Compact labels and numeric statistics. */
-  --font-pixel: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-serif: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --font-pixel: 'VT323', ui-monospace, monospace;
 
-  /* Cards separate by borders and tone, not shadows; only overlays float. */
-  --shadow-card: 0 0 #0000;
-  --shadow-float: 0 12px 32px -16px rgb(25 25 25 / 0.3);
+  --shadow-card: inset 0 0 10px #000, 0 4px 6px rgb(0 0 0 / 0.8);
+  --shadow-float: inset 0 0 12px #000, 0 16px 40px rgb(0 0 0 / 0.9);
 }
 
 @layer base {
@@ -79,4 +77,135 @@
   .pb-safe {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
+}
+
+/* ------------------------------------------------------------------
+   Skin layer: classic 90s RPG HUD. Pure CSS over the existing markup;
+   no component, logic or data changes.
+   ------------------------------------------------------------------ */
+
+/* Stone backdrop, vignette and grain. */
+body {
+  background:
+    radial-gradient(ellipse at 50% 0%, #17171d 0%, #0a0a0c 60%) fixed,
+    #0a0a0c;
+}
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+body::before {
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.55) 100%);
+}
+body::after {
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#root > div {
+  background: transparent;
+}
+
+/* Carved corners instead of soft modern radii. */
+[class*='rounded-['] {
+  border-radius: 4px;
+}
+.rounded-full {
+  border-radius: 3px;
+}
+
+/* Panels: bevelled stone with deep inset shadow. */
+.bg-card {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(0 0 0 / 0.25));
+}
+.bg-card.border,
+section.border,
+article.border {
+  border: 2px solid #2a2a35;
+  box-shadow: inset 0 0 10px #000, inset 0 1px 0 rgb(255 255 255 / 0.05), 0 4px 6px rgb(0 0 0 / 0.8);
+}
+.bg-raised {
+  background-image: linear-gradient(180deg, #23232c, #17171d);
+  box-shadow: inset 0 0 8px rgb(0 0 0 / 0.8);
+}
+
+/* Titles in old gold; stats and labels in terminal green. */
+.font-serif {
+  color: #d4af37;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 0 #000;
+}
+.font-pixel {
+  font-size: 16px;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  color: #7ec850;
+}
+.font-pixel.text-gold {
+  color: #d4af37;
+}
+
+/* Buttons: forged plates. Primary = gold plate, secondary = dark iron. */
+button.rounded-full {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+button.bg-accent,
+div.bg-accent {
+  background-image: linear-gradient(180deg, #e8c95a, #a8842a);
+  border: 2px solid #5a4f2e;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45), inset 0 -2px 0 rgb(0 0 0 / 0.35), 0 3px 5px rgb(0 0 0 / 0.8);
+  text-shadow: none;
+}
+button.border {
+  border: 2px solid #3a3a47;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), inset 0 -2px 0 rgb(0 0 0 / 0.5), 0 2px 4px rgb(0 0 0 / 0.7);
+}
+button:active:not(:disabled) {
+  filter: brightness(0.85);
+}
+
+/* Square inventory slots: icon controls and discipline symbols. */
+.h-9.w-9,
+.h-11.w-11,
+.h-12.w-12 {
+  border-radius: 2px;
+  border: 2px solid #3a3a47;
+  background: linear-gradient(145deg, #1f1f27, #0e0e12);
+  box-shadow: inset 0 0 6px #000, inset 0 1px 0 rgb(255 255 255 / 0.07), 0 2px 3px rgb(0 0 0 / 0.8);
+  color: #d4af37;
+}
+
+/* Inputs: dark recessed wells. */
+input,
+textarea {
+  background: #0c0c10 !important;
+  border: 2px solid #2a2a35 !important;
+  box-shadow: inset 0 2px 6px #000;
+  color: #d1c7bd;
+}
+input:focus,
+textarea:focus {
+  border-color: #5a4f2e !important;
+}
+
+/* State pills as small HUD plaques (label + colour preserved). */
+.bg-\[\#efe6cc\] {
+  background: #2a2210;
+}
+.bg-\[\#e6e2f1\] {
+  background: #141c33;
+}
+.bg-accent-soft {
+  box-shadow: inset 0 0 0 1px #2c4a1d;
+}
+
+/* Overlay behind sheets must darken, not lighten. */
+.bg-text\/25 {
+  background-color: rgb(0 0 0 / 0.75);
 }
