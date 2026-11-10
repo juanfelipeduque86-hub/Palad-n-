@@ -1,4 +1,4 @@
-import type { Task } from '../types';
+import type { CompletionRecord } from '../types';
 import { DAY } from '../lib/time';
 
 export interface DayActivity {
@@ -9,32 +9,35 @@ export interface DayActivity {
 }
 
 const LABELS = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
-/** Sample history for the six previous days (most recent last). */
-const SAMPLE_PAST = [2, 4, 1, 3, 5, 3];
 
-const startOfDay = (ms: number): number => {
+export const startOfDay = (ms: number): number => {
   const d = new Date(ms);
   d.setHours(0, 0, 0, 0);
   return d.getTime();
 };
 
-export function completedToday(tasks: Task[], now: number): number {
+export function completedToday(history: CompletionRecord[], now: number): number {
   const start = startOfDay(now);
-  return tasks.filter((t) => t.status === 'completed' && new Date(t.lastInteractedAt).getTime() >= start).length;
+  return history.filter((r) => new Date(r.completedAt).getTime() >= start).length;
 }
 
-/** Last 7 days ending today: sample history + today's real completions. */
-export function weeklyActivity(tasks: Task[], now: number): DayActivity[] {
+/** Last 7 days ending today, from real completion records. */
+export function weeklyActivity(history: CompletionRecord[], now: number): DayActivity[] {
   const today = startOfDay(now);
+  const counts = new Map<number, number>();
+  for (const r of history) {
+    const d = startOfDay(new Date(r.completedAt).getTime());
+    counts.set(d, (counts.get(d) ?? 0) + 1);
+  }
   return Array.from({ length: 7 }, (_, i) => {
     const offset = 6 - i;
-    const day = new Date(today - offset * DAY);
-    const isToday = offset === 0;
+    const dayMs = startOfDay(today - offset * DAY + 2 * 3_600_000);
+    const day = new Date(dayMs);
     return {
-      key: day.toDateString(),
+      key: String(dayMs),
       label: LABELS[day.getDay()] ?? '',
-      count: isToday ? completedToday(tasks, now) : (SAMPLE_PAST[i] ?? 0),
-      isToday,
+      count: counts.get(dayMs) ?? 0,
+      isToday: offset === 0,
     };
   });
 }

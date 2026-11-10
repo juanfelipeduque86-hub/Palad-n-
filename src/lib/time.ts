@@ -21,3 +21,9 @@ export function formatSince(ms: number): string {
   if (ms < DAY) return `${Math.floor(ms / HOUR)}h`;
   return `${Math.floor(ms / DAY)}d`;
 }
+
+/** "hace un momento" / "hace 3h". */
+export function formatAgo(ms: number): string {
+  const s = formatSince(ms);
+  return s === 'ahora' ? 'hace un momento' : `hace ${s}`;
+}

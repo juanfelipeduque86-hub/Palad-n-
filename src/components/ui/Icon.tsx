@@ -9,7 +9,20 @@ export type IconName =
   | 'arrow'
   | 'check'
   | 'close'
-  | 'spark';
+  | 'spark'
+  | 'star'
+  | 'plus'
+  | 'search'
+  | 'sliders'
+  | 'refresh'
+  | 'book'
+  | 'history'
+  | 'pencil'
+  | 'archive'
+  | 'back'
+  | 'chevron'
+  | 'undo'
+  | 'clock';
 
 /** Builds a closed gear outline on the 24px grid. */
 function gearPath(): string {
@@ -46,6 +59,19 @@ const PATHS: Record<IconName, string[]> = {
   arrow: ['M5 12h14', 'M13 6l6 6-6 6'],
   check: ['M5 12.5l4.5 4.5L19 7.5'],
   close: ['M6 6l12 12', 'M18 6 6 18'],
+  star: ['M12 3.8l2.5 5.1 5.6.8-4.05 3.95.95 5.6L12 16.6l-5 2.65.95-5.6L3.9 9.7l5.6-.8Z'],
+  plus: ['M12 5v14', 'M5 12h14'],
+  search: ['M17.5 10.75a6.75 6.75 0 1 1-13.5 0a6.75 6.75 0 0 1 13.5 0Z', 'M15.6 15.6 20 20'],
+  sliders: ['M4 7h9', 'M17 7h3', 'M4 17h3', 'M11 17h9', 'M15 4.5v5', 'M9 14.5v5'],
+  refresh: ['M19.5 12a7.5 7.5 0 1 1-2.2-5.3', 'M19.5 4v4.5H15'],
+  book: ['M5 5.5A1.5 1.5 0 0 1 6.5 4H19v14H6.5A1.5 1.5 0 0 0 5 19.5Z', 'M5 19.5A1.5 1.5 0 0 0 6.5 21H19', 'M9 8h6'],
+  history: ['M4.5 12a7.5 7.5 0 1 0 2.2-5.3', 'M4.5 4v4.5H9', 'M12 8v4l2.5 2.5'],
+  pencil: ['M15.5 4.5l4 4L9 19H5v-4Z', 'M13 7l4 4'],
+  archive: ['M4 5h16v4H4Z', 'M5.5 9v10h13V9', 'M10 13h4'],
+  back: ['M15 5l-7 7 7 7'],
+  chevron: ['M9 5l7 7-7 7'],
+  undo: ['M9 7 5 11l4 4', 'M5 11h9a5 5 0 0 1 0 10h-2'],
+  clock: ['M20.25 12a8.25 8.25 0 1 1-16.5 0a8.25 8.25 0 0 1 16.5 0Z', 'M12 7.5V12l3 2'],
   spark: ['M12 3.5v4', 'M12 16.5v4', 'M3.5 12h4', 'M16.5 12h4', 'M7 7l1.8 1.8', 'M15.2 15.2 17 17', 'M17 7l-1.8 1.8', 'M8.8 15.2 7 17'],
 };
 

@@ -69,7 +69,7 @@ export function PaladinAvatar({
         </span>
       </div>
 
-      <div className="relative mx-auto -mt-1 h-[200px] w-full max-w-[270px]">
+      <div className="relative mx-auto -mt-1 h-[180px] w-full max-w-[250px]">
         <PaladinSprite state={state} className="h-full w-full" />
       </div>
 

@@ -27,7 +27,7 @@ export function IncreaseLevelButton({ onPress, disabled }: IncreaseLevelButtonPr
           {disabled ? 'INVENTARIO VACÍO' : 'INCREASE LEVEL'}
         </span>
         <span className="text-[12px] font-medium opacity-70">
-          {disabled ? 'Todas las quests completas' : 'Una sola quest, sin decidir'}
+          {disabled ? 'Nada disponible ahora' : 'Empieza la quest sugerida'}
         </span>
       </span>
       <span

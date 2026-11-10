@@ -10,6 +10,8 @@ interface IconButtonProps {
   active?: boolean;
   size?: 'sm' | 'md' | 'lg';
   filledIcon?: boolean;
+  /** Inactive surface: raised (default) or card, for use on raised rows. */
+  tone?: 'raised' | 'card';
   className?: string;
 }
 
@@ -24,6 +26,7 @@ export function IconButton({
   active = false,
   size = 'md',
   filledIcon = false,
+  tone = 'raised',
   className = '',
 }: IconButtonProps) {
   return (
@@ -36,7 +39,7 @@ export function IconButton({
       className={`grid shrink-0 place-items-center rounded-full transition-colors duration-200 ${SIZE[size]} ${
         active
           ? 'bg-mint text-mint-ink hover:bg-mint-strong'
-          : 'bg-raised text-text hover:bg-track'
+          : `${tone === 'card' ? 'bg-card' : 'bg-raised'} text-text hover:bg-track`
       } ${className}`}
     >
       <Icon name={icon} size={ICON[size]} filled={filledIcon} />
