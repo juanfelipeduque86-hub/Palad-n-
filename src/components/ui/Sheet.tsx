@@ -38,7 +38,7 @@ export function Sheet({ open, onClose, labelledBy, tall = false, viewKey = 'view
             type="button"
             aria-label="Cerrar panel"
             tabIndex={-1}
-            className="absolute inset-0 bg-text/30"
+            className="absolute inset-0 bg-text/25"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

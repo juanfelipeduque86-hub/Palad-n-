@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="mx-auto min-h-dvh w-full max-w-[480px] px-4 pt-safe pb-safe">
+      <div className={`mx-auto min-h-dvh w-full px-4 pt-safe pb-safe ${route.name === 'home' ? 'max-w-[480px] lg:max-w-[1000px] lg:px-8 lg:pt-8' : 'max-w-[480px] md:max-w-[600px] md:pt-6'}`}>
         {route.name === 'home' && (
           <Home api={api} onOpen={(m) => setRoute({ name: m })} onPlay={(id) => setRoute({ name: 'play', mapId: id })} onAbout={() => setAbout(true)} />
         )}

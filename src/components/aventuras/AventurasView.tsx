@@ -14,9 +14,9 @@ export function AventurasView({ api, onBack, onPlay }: { api: ProgressApi; onBac
           const s = progress.adventures[m.id];
           const pct = s ? Math.round(exploredRatio(m, s) * 100) : 0;
           return (
-            <li key={m.id} className="rounded-[24px] border border-line bg-card p-5 shadow-card">
+            <li key={m.id} className="rounded-[24px] border border-line bg-card p-5 ">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-pixel text-[10px] tracking-[0.18em] text-faint">MAZMORRA {i + 1}</span>
+                <span className="font-pixel text-[10px] tracking-[0.14em] text-sub">MAZMORRA {i + 1}</span>
                 {s?.completed ? <Pill tone="accent">Completada</Pill> : s ? <Pill tone="gold">En curso · {pct}%</Pill> : <Pill>Sin empezar</Pill>}
               </div>
               <h2 className="mt-2 font-serif text-[22px] leading-tight font-semibold">{m.title}</h2>

@@ -1,6 +1,6 @@
 # Paladin
 
-Compañero guerrero en pixel art para razonar, descubrir, imaginar y explorar. Interfaz editorial en marfil.
+Compañero guerrero en pixel art para razonar, descubrir, imaginar y explorar. Interfaz editorial en marfil: tinta casi negra, títulos con serifa, líneas finas y superficies mate.
 
 > **Todo es local y escrito a mano. No hay IA.** Paladin no genera contenido, no mantiene conversaciones abiertas
 > y no evalúa la calidad de ideas libres. La app lo indica con la etiqueta «Contenido local · sin IA».
@@ -19,7 +19,7 @@ Las mazmorras están verificadas con un solucionador automático (búsqueda en a
 
 ## Arte
 
-El guerrero (64×64) y los tiles (16×16) se dibujan en código con un pequeño rasterizador (`src/lib/pixel.ts`):
+El guerrero (96×96) y los tiles (16×16) se dibujan en código con un pequeño rasterizador (`src/lib/pixel.ts`):
 materiales con tres tonos, luz desde arriba a la izquierda y contorno automático. Se muestran con `image-rendering: pixelated`
 a escala entera.
 
@@ -39,7 +39,7 @@ Progreso en `localStorage` (`paladin:progress:v1`), con recuperación por seccio
 
 ```
 src/
-  art/          palette, warrior (64×64), tiles (16×16)
+  art/          palette, warrior (96×96), tiles (16×16)
   adventure/    engine (puro), maps, render
   content/      riddles, facts, prompts
   lib/          pixel (rasterizador), answers, progress, motion

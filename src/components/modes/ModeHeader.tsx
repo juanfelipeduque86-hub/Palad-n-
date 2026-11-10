@@ -14,7 +14,7 @@ export function ModeHeader({ numeral, title, subtitle, onBack }: ModeHeaderProps
     <header className="flex items-start gap-3 pt-2 pb-4">
       <IconButton icon="back" label="Volver al campamento" onClick={onBack} size="sm" tone="card" />
       <div className="min-w-0 flex-1">
-        <p className="font-pixel text-[10px] tracking-[0.2em] text-faint uppercase">{numeral}</p>
+        <p className="font-pixel text-[10px] tracking-[0.14em] text-sub uppercase">{numeral}</p>
         <h1 className="font-serif text-[30px] leading-none font-semibold tracking-[-0.01em]">{title}</h1>
         <p className="mt-1.5 text-[13px] leading-snug text-sub">{subtitle}</p>
       </div>

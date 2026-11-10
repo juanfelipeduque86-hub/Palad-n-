@@ -32,7 +32,7 @@ export function FactCard({ fact: f, saved, onToggleSave, onOpenRelated, onRead }
   };
 
   return (
-    <article className="rounded-[24px] border border-line bg-card p-5 shadow-card">
+    <article className="rounded-[24px] border border-line bg-card p-5 ">
       <div className="flex flex-wrap items-center gap-2">
         <Pill>{f.topic}</Pill>
         <Pill tone={CERT_TONE[f.certainty]}>{CERTAINTY_LABEL[f.certainty]}</Pill>
@@ -84,7 +84,7 @@ export function FactCard({ fact: f, saved, onToggleSave, onOpenRelated, onRead }
               <span className="font-semibold text-sub">Fuente:</span> {f.source}
             </p>
 
-            <h3 className="mt-5 font-pixel text-[10px] tracking-[0.18em] text-faint">SEGUIR TIRANDO DEL HILO</h3>
+            <h3 className="mt-5 font-pixel text-[10px] tracking-[0.14em] text-sub">SEGUIR TIRANDO DEL HILO</h3>
             <ul className="mt-2 flex flex-col gap-2">
               {f.followups.map((q, i) => {
                 const isOpen = opened.includes(i);
@@ -107,7 +107,7 @@ export function FactCard({ fact: f, saved, onToggleSave, onOpenRelated, onRead }
 
             {onOpenRelated && f.related.length > 0 && (
               <>
-                <h3 className="mt-5 font-pixel text-[10px] tracking-[0.18em] text-faint">RELACIONADO</h3>
+                <h3 className="mt-5 font-pixel text-[10px] tracking-[0.14em] text-sub">RELACIONADO</h3>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {f.related.map((id) => {
                     const r = FACTS.find((x) => x.id === id);

@@ -141,22 +141,22 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
     <div className="flex flex-col items-center">
       <div className="mb-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-sub">
         <span>
-          Llaves <b className="text-text tabular-nums">{state.keys}</b>
+          Llaves <b className="font-pixel font-medium text-text tabular-nums">{state.keys}</b>
         </span>
         {total > 0 && (
           <span>
-            Gemas <b className="text-text tabular-nums">{gemsFound(map, state)}/{total}</b>
+            Gemas <b className="font-pixel font-medium text-text tabular-nums">{gemsFound(map, state)}/{total}</b>
           </span>
         )}
         <span>
-          Explorado <b className="text-text tabular-nums">{pct}%</b>
+          Explorado <b className="font-pixel font-medium text-text tabular-nums">{pct}%</b>
         </span>
         <span>
-          Pasos <b className="text-text tabular-nums">{state.steps}</b>
+          Pasos <b className="font-pixel font-medium text-text tabular-nums">{state.steps}</b>
         </span>
       </div>
 
-      <div className="rounded-[20px] border border-line bg-[#2a251e] p-2 shadow-card">
+      <div className="rounded-[20px] border border-line-strong bg-[#2a251e] p-2">
         <canvas
           ref={canvas}
           width={VIEW * TILE}
@@ -183,8 +183,8 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
       </p>
 
       {state.completed ? (
-        <div className="mt-2 w-full rounded-[24px] border border-line bg-card p-5 text-center shadow-card">
-          <p className="font-pixel text-[11px] tracking-[0.2em] text-gold">AVENTURA COMPLETADA</p>
+        <div className="mt-2 w-full rounded-[24px] border border-line bg-card p-5 text-center ">
+          <p className="font-pixel text-[11px] tracking-[0.14em] text-gold">AVENTURA COMPLETADA</p>
           <p className="mt-2 text-[15px] text-sub">
             {state.steps} pasos · {pct}% explorado{total ? ` · ${gemsFound(map, state)}/${total} gemas` : ''}
           </p>

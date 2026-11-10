@@ -24,7 +24,7 @@ export function ChipRow<T extends string | number>({ label, value, options, onCh
             whileTap={{ scale: 0.94 }}
             transition={press}
             className={`h-9 shrink-0 rounded-full px-3.5 text-[13px] font-medium whitespace-nowrap transition-colors ${
-              on ? 'bg-text text-bg' : 'border border-line bg-card text-sub hover:text-text'
+              on ? 'border border-accent bg-accent text-accent-ink' : 'border border-line-strong text-sub hover:text-text'
             }`}
           >
             {o.label}

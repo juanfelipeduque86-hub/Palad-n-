@@ -22,7 +22,7 @@ export function PromptCard({ prompt: p, draft, onDraft, onSave, savedCount }: Pr
   const checks = checkRules(p, draft);
 
   return (
-    <article className="rounded-[24px] border border-line bg-card p-5 shadow-card">
+    <article className="rounded-[24px] border border-line bg-card p-5 ">
       <div className="flex flex-wrap items-center gap-2">
         <Pill tone="lav">{PROMPT_KIND_LABEL[p.kind]}</Pill>
         {savedCount > 0 && <span className="text-[12px] text-faint">Lo has intentado {savedCount} {savedCount === 1 ? 'vez' : 'veces'}</span>}
@@ -46,7 +46,7 @@ export function PromptCard({ prompt: p, draft, onDraft, onSave, savedCount }: Pr
       {checks.length > 0 && (
         <ul className="mt-2 flex flex-col gap-1" aria-label="Reglas del reto">
           {checks.map((c) => (
-            <li key={c.label} className={`flex items-center gap-2 text-[13px] ${c.ok ? 'text-accent' : 'text-faint'}`}>
+            <li key={c.label} className={`flex items-center gap-2 text-[13px] ${c.ok ? 'text-ok' : 'text-faint'}`}>
               <Icon name={c.ok ? 'check' : 'close'} size={14} />
               {c.label}
             </li>
@@ -77,7 +77,7 @@ export function PromptCard({ prompt: p, draft, onDraft, onSave, savedCount }: Pr
           {checks.length > 0 && checks.some((c) => !c.ok) && (
             <p className="mb-3 text-[14px] text-sub">Alguna regla del reto no se cumple todavía. Puedes ajustarlo o dejarlo así: es tu idea.</p>
           )}
-          <h3 className="font-pixel text-[10px] tracking-[0.18em] text-faint">OTROS CAMINOS POSIBLES</h3>
+          <h3 className="font-pixel text-[10px] tracking-[0.14em] text-sub">OTROS CAMINOS POSIBLES</h3>
           <ul className="mt-2 flex flex-col gap-2">
             {p.approaches.map((a) => (
               <li key={a.name} className="rounded-[16px] bg-raised px-4 py-3">
@@ -86,7 +86,7 @@ export function PromptCard({ prompt: p, draft, onDraft, onSave, savedCount }: Pr
               </li>
             ))}
           </ul>
-          <h3 className="mt-4 font-pixel text-[10px] tracking-[0.18em] text-faint">PARA MIRAR TU IDEA</h3>
+          <h3 className="mt-4 font-pixel text-[10px] tracking-[0.14em] text-sub">PARA MIRAR TU IDEA</h3>
           <ul className="mt-2 list-disc pl-5 text-[14px] leading-relaxed text-sub">
             {p.reflect.map((r) => (
               <li key={r}>{r}</li>

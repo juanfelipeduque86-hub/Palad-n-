@@ -61,7 +61,7 @@ export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother,
   };
 
   return (
-    <article className="rounded-[24px] border border-line bg-card p-5 shadow-card">
+    <article className="rounded-[24px] border border-line bg-card p-5 ">
       <div className="flex flex-wrap items-center gap-2">
         <Pill>{KIND_LABEL[c.kind]}</Pill>
         <Pill tone={c.level === 1 ? 'accent' : c.level === 2 ? 'gold' : 'lav'}>{LEVEL_LABEL[c.level]}</Pill>
@@ -120,7 +120,7 @@ export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother,
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             className={`mt-4 rounded-[18px] px-4 py-3 text-[14px] leading-relaxed ${
-              feedback.kind === 'correct' ? 'bg-accent-soft text-accent-strong' : 'bg-raised text-text'
+              feedback.kind === 'correct' ? 'bg-accent-soft text-text' : 'bg-raised text-text'
             }`}
           >
             {feedback.kind === 'correct' && (
@@ -144,7 +144,7 @@ export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother,
         <ol className="mt-4 flex flex-col gap-2">
           {c.hints.slice(0, hints).map((h, i) => (
             <li key={h} className="flex gap-3 rounded-[16px] border border-dashed border-line px-3.5 py-2.5 text-[14px] leading-snug">
-              <span className="font-pixel text-[10px] text-gold">{startHint && i === 0 ? 'INICIO' : `PISTA ${i + 1}`}</span>
+              <span className="shrink-0 pt-0.5 font-pixel text-[10px] font-medium whitespace-nowrap text-gold">{startHint && i === 0 ? 'INICIO' : `PISTA ${i + 1}`}</span>
               <span>{h}</span>
             </li>
           ))}

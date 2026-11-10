@@ -18,7 +18,7 @@ interface ButtonProps {
 export function Button({ children, onClick, variant = 'secondary', icon, disabled, type = 'button', className = '', label }: ButtonProps) {
   const styles = {
     primary: 'bg-accent text-accent-ink hover:bg-accent-strong disabled:bg-raised disabled:text-faint',
-    secondary: 'border border-line bg-card text-text hover:bg-raised disabled:text-faint',
+    secondary: 'border border-line-strong bg-card text-text hover:bg-raised disabled:border-line disabled:text-faint',
     ghost: 'text-sub hover:text-text disabled:text-faint',
   }[variant];
   return (
@@ -40,9 +40,9 @@ export function Button({ children, onClick, variant = 'secondary', icon, disable
 export function Pill({ children, tone = 'neutral' }: { children: ReactNode; tone?: 'neutral' | 'accent' | 'gold' | 'lav' }) {
   const t = {
     neutral: 'bg-raised text-sub',
-    accent: 'bg-accent-soft text-accent-strong',
-    gold: 'bg-[#f3e6c4] text-[#7a5a17]',
-    lav: 'bg-[#e9e4f6] text-lav',
+    accent: 'bg-accent-soft text-ok',
+    gold: 'bg-[#efe6cc] text-gold',
+    lav: 'bg-[#e6e2f1] text-lav',
   }[tone];
   return <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-[12px] font-medium ${t}`}>{children}</span>;
 }
