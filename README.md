@@ -1,68 +1,69 @@
 # Paladin
 
-PWA móvil de gestión de tareas gamificada para personas creativas y con ADHD.
-Quests, atención y un caballero 1-bit que reacciona a tu ritmo.
+Compañero de conversación para aclarar lo que tienes entre manos: un proyecto que no avanza, algo que
+estudias, una decisión. Paladin pregunta por lo que le cuentas, resume lo que entiende, acepta correcciones
+y solo propone un paso pequeño si tú lo pides.
 
-> Solo frontend: sin backend, login ni integraciones. Biblioteca local + `localStorage`.
+> **Estado: prototipo local con reglas, no una IA.** La conversación la genera un motor determinista en
+> español (`src/conversation/`). Reconoce temas y expresiones concretas; cuando no entiende algo, lo dice.
+> La interfaz lo indica siempre con la etiqueta «Prototipo local · sin IA».
 
 ## Stack
 
-React 19 · Vite 6 · TypeScript estricto · Tailwind CSS 4 · Framer Motion 12
-
-## Scripts
+React 19 · Vite 6 · TypeScript estricto · Tailwind CSS 4 · Framer Motion 12. Sin backend.
 
 ```bash
 npm install
-npm run dev        # servidor de desarrollo
-npm run typecheck  # tsc --noEmit
-npm run build      # typecheck + build de producción
-npm run preview    # sirve dist/ (registra el service worker)
+npm run dev        # desarrollo
+npm run typecheck
+npm run build      # typecheck + build de producción (PWA con service worker)
 ```
 
-## Qué incluye
+## Cómo funciona la conversación
 
-- **Dashboard** (punto de entrada, sin saturar): Paladin con sus tres estados, barra de EXP,
-  cápsula de próxima quest (con «otra» y «empezar»), botón `INCREASE LEVEL`, anillo de meta diaria,
-  actividad semanal real y accesos a Biblioteca e Historial.
-- **Biblioteca de 60 micro-quests** en español (20 Combat, 20 Potions, 20 Keys) con duración
-  (1–15 min), esfuerzo, EXP y etiquetas. Búsqueda sin tildes y filtros por categoría, duración,
-  esfuerzo y favoritas.
-- **Quests personales**: crear, editar, archivar, restaurar y reabrir. Quedan completadas hasta que
-  las reabres; nunca se reciclan solas.
-- **Focus Tunnel**: una sola quest, `COMPLETE`, «Otra quest» y «Ahora no». Tras completar muestra
-  la EXP, el progreso de nivel y una siguiente sugerencia, o deja volver al inicio / parar.
-- **Recomendador local** (`src/lib/recommend.ts`): respeta los filtros, no repite la quest actual,
-  prioriza las no vistas en la ronda, luego las tuyas y favoritas. Explica cuándo solo hay una opción,
-  cuándo ya viste todas (nueva ronda / ampliar filtros / favoritas) y cuándo no hay resultados
-  (propone relajar filtros con el número de quests que aparecerían).
-- **Reglas de repetición**: cada completada genera un registro propio; la EXP se otorga una vez por
-  sesión de foco (los toques repetidos no duplican). Las quests de biblioteca descansan 8 h antes de
-  volver a sugerirse, aunque puedes repetirlas a propósito desde la biblioteca o el historial.
-- **Historial** agrupado por día, con repetir/reabrir. **Ajustes** con meta diaria, quests archivadas,
-  estado del guardado y controles de demo.
-- **Persistencia local versionada** (`paladin:data:v2`): progreso, quests personales, favoritas,
-  historial, sugerencias vistas y preferencias. Si el almacenamiento falla o está corrupto, la app
-  recupera campo a campo y sigue funcionando.
-- **PWA**: manifest, iconos y service worker offline (solo en build de producción).
+Bucle: **preguntar → escuchar → entender → repreguntar sobre lo dicho → aclarar juntos → paso opcional**.
 
-La app no genera contenido con IA: todo sale de la biblioteca local y de tus propias quests.
+- `extract.ts` saca de cada mensaje lo reconocible: de qué se trata (app, novela, examen, mudanza…), qué
+  parte cuesta (diseño, contenido, memorizar…), detalles (colores, distribución, el final…), qué lo complica,
+  límites de tiempo, opciones de una decisión, correcciones («no es X, en realidad es Y») y cambios de tema.
+- `engine.ts` mantiene lo que entiende (`Understanding`), registra qué preguntó para no repetirlo y elige la
+  siguiente pregunta según lo que falta. Cuando una respuesta no encaja en lo esperado, guarda tus palabras
+  tal cual y te avisa de cómo las interpretó.
+- Con suficiente contexto muestra un resumen provisional, corregible punto por punto. Después ofrece
+  direcciones (seguir explorando, entender por qué pasa, ver opciones, decidir, un paso pequeño o parar) sin
+  imponer ninguna. Los pasos son editables y se pueden descartar; guardar uno no encola otro.
+- Los temas se pueden pausar y retomar. Las conversaciones y acciones guardadas viven solo en `localStorage`
+  (`paladin:conversations:v1`), con recuperación si los datos están dañados.
+
+### Límites conocidos
+
+- No entiende lenguaje libre en general: solo los patrones programados, en español.
+- No responde preguntas de conocimiento general ni tiene conexión a internet.
+- Las lecturas («entender por qué pasa») y opciones salen de plantillas, adaptadas con tus palabras.
+
+## Pasar a una IA real
+
+`ConversationEngine` (en `src/conversation/types.ts`) define el contrato: `start`, `respond`,
+`beginCorrection`, `resume`, `stepOutcome`. Un motor basado en un modelo de lenguaje podría implementarlo
+llamando a un endpoint propio. Requisitos:
+
+- **Servidor**: una función serverless o backend que guarde la clave de API. La clave nunca puede ir en el
+  navegador ni en el repositorio. GitHub Pages no sirve para esto (solo archivos estáticos).
+- **Privacidad**: los mensajes saldrían del dispositivo hacia el proveedor del modelo.
+- **Coste**: se paga por tokens. Como referencia, Claude Opus 5.5 cuesta 4 $ por millón de tokens de entrada
+  y 20 $ por millón de salida; un mensaje típico de esta app rondaría 1–2 céntimos de dólar.
 
 ## Estructura
 
 ```
 src/
+  conversation/  types, text, extract, content, engine, storage
+  hooks/         useConversations
   components/
-    dashboard/     AppHeader, ExperienceBar, NextQuestCapsule, IncreaseLevelButton, QuestRing,
-                   WeeklyActivity, ExploreRow, FilterSummary, LevelUpBurst, Dashboard
-    paladin/       PaladinAvatar, PaladinSprite
-    quests/        LibraryView, CategoryView, HistoryView, QuestDetail, QuestEditor,
-                   SuggestFiltersView, QuestRow
-    settings/      SettingsView
-    inventory/     InventoryBar
-    focus-tunnel/  FocusTunnel
-    ui/            Icon, IconButton, Card, Sheet, SheetHeader, Chip, Segmented, Field, Notice, Toast
-  hooks/           useAppStore, useNow
-  lib/             recommend, quests, exp, leveling, paladin, storage, time, motion, haptics
-  types/           modelos de dominio (plantilla, quest personal, registro de completada…)
-  data/            questLibrary (60 quests), seed, categories, activity
+    chat/        ChatHeader, ContextStrip, MessageBubble, ChipBar, Composer, Welcome, Typing
+    sheets/      UnderstandingSheet, HistorySheet, AboutSheet
+    paladin/     PaladinSprite
+    ui/          Icon, IconButton, Sheet, SheetHeader, Segmented, Field, Toast
+  lib/           motion
+  App.tsx
 ```

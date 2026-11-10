@@ -1,7 +1,7 @@
 {
   "name": "Paladin",
   "short_name": "Paladin",
-  "description": "Quests y atención para mentes creativas.",
+  "description": "Un compañero de conversación para aclarar lo que tienes entre manos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

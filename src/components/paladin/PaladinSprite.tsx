@@ -108,15 +108,17 @@ const STATES: PaladinState[] = ['resting', 'battle-ready', 'fatigued'];
 interface PaladinSpriteProps {
   state: PaladinState;
   className?: string;
+  /** "head" frames only the helm, for small avatars. */
+  crop?: 'full' | 'head';
 }
 
-export function PaladinSprite({ state, className }: PaladinSpriteProps) {
+export function PaladinSprite({ state, className, crop = 'full' }: PaladinSpriteProps) {
   return (
     <svg
-      viewBox="-24 0 256 236"
+      viewBox={crop === 'head' ? '73 24 54 54' : '-24 0 256 236'}
       className={className}
       role="img"
-      aria-label={`Paladin, estado ${state}`}
+      aria-label={crop === 'head' ? 'Paladin' : `Paladin, estado ${state}`}
       fill="none"
     >
       {/* Ground */}
