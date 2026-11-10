@@ -1,6 +1,4 @@
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
-import { drawScene } from '../../art/scene';
 import { exploredRatio } from '../../adventure/engine';
 import { MAPS } from '../../adventure/maps';
 import { CHALLENGES } from '../../content/riddles';
@@ -8,7 +6,8 @@ import { FACTS } from '../../content/facts';
 import { PROMPTS } from '../../content/prompts';
 import type { ProgressApi } from '../../hooks/useProgress';
 import { Icon, type IconName } from '../ui/Icon';
-import { PixelCanvas } from '../ui/PixelCanvas';
+import { MiniMap } from './MiniMap';
+import { PaintedScene } from './PaintedScene';
 import { press } from '../../lib/motion';
 
 export type ModeId = 'lucha' | 'pociones' | 'encantamientos' | 'aventuras';
@@ -49,15 +48,6 @@ function HudBar({ label, value, total, color }: { label: string; value: number; 
 
 export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
   const { progress } = api;
-  const scene = useMemo(drawScene, []);
-  const [scale, setScale] = useState(2);
-  useEffect(() => {
-    const fit = () => setScale(window.innerWidth >= 760 ? 4 : window.innerWidth >= 580 ? 3 : 2);
-    fit();
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
-  }, []);
-
   const solved = Object.keys(progress.lucha.solved).length;
   const cleanSolves = Object.values(progress.lucha.solved).filter((s) => s.hints === 0 && !s.revealed).length;
   const read = progress.pociones.read.length;
@@ -65,6 +55,7 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
   const tried = new Set(progress.encantamientos.entries.map((e) => e.promptId)).size;
   const inProgress = MAPS.find((m) => progress.adventures[m.id] && !progress.adventures[m.id]?.completed);
   const completedMaps = MAPS.filter((m) => progress.adventures[m.id]?.completed).length;
+  const miniMap = inProgress ?? MAPS.find((m) => progress.adventures[m.id]) ?? MAPS[0]!;
   const pctExplored = inProgress ? Math.round(exploredRatio(inProgress, progress.adventures[inProgress.id]!) * 100) : 0;
 
   return (
@@ -78,8 +69,8 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
       </header>
 
       {/* Scene viewport */}
-      <div className="hud-frame flex justify-center overflow-hidden bg-black p-1">
-        <PixelCanvas sprite={scene} scale={scale} label="El Paladín ante un lago de montaña al anochecer, con armadura, escudo y espada" />
+      <div className="hud-frame overflow-hidden bg-black p-1">
+        <PaintedScene />
       </div>
 
       {/* Bottom HUD: status bars + action slots, message log, adventure panel */}
@@ -113,6 +104,7 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
         </section>
 
         <section className="hud-frame flex flex-col justify-between gap-2 bg-card p-3" aria-label="Aventura">
+          <MiniMap map={miniMap} state={progress.adventures[miniMap.id]} />
           <div>
             <p className="font-pixel text-[13px] leading-none uppercase">IV · Aventuras</p>
             <p className="mt-1 font-serif text-[16px] leading-tight font-semibold">{inProgress ? inProgress.title : 'Mazmorras jugables'}</p>

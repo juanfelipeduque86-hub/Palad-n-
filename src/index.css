@@ -21,15 +21,15 @@
   --color-faint: #6f685f;
 
   /* Actions in old gold. */
-  --color-accent: #d4af37;
-  --color-accent-strong: #e8c95a;
+  --color-accent: #b39a5c;
+  --color-accent-strong: #c9b070;
   --color-accent-ink: #0a0a0c;
 
   /* Gameplay indicators (always paired with a label or symbol). */
   --color-accent-soft: #16240f;
-  --color-ok: #7ec850;
+  --color-ok: #8aa86a;
   --color-lav: #7f9fe0;
-  --color-gold: #d4af37;
+  --color-gold: #b39a5c;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-serif: 'Cinzel', 'Trajan Pro', Georgia, serif;
@@ -134,7 +134,7 @@ article.border {
 
 /* Titles in old gold; stats and labels in terminal green. */
 .font-serif {
-  color: #d4af37;
+  color: #b39a5c;
   letter-spacing: 0.02em;
   text-shadow: 0 2px 0 #000;
 }
@@ -142,10 +142,10 @@ article.border {
   font-size: 16px;
   line-height: 1.1;
   letter-spacing: 0.06em;
-  color: #7ec850;
+  color: #8aa86a;
 }
 .font-pixel.text-gold {
-  color: #d4af37;
+  color: #b39a5c;
 }
 
 /* Buttons: forged plates. Primary = gold plate, secondary = dark iron. */
@@ -157,7 +157,7 @@ button.rounded-full {
 }
 button.bg-accent,
 div.bg-accent {
-  background-image: linear-gradient(180deg, #e8c95a, #a8842a);
+  background-image: linear-gradient(180deg, #a8925a, #6f5f36);
   border: 2px solid #5a4f2e;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45), inset 0 -2px 0 rgb(0 0 0 / 0.35), 0 3px 5px rgb(0 0 0 / 0.8);
   text-shadow: none;
@@ -251,7 +251,7 @@ textarea:focus {
   font-family: var(--font-pixel);
   font-size: 19px;
   line-height: 1.15;
-  color: #d9b36a;
+  color: #c2a05c;
   min-height: 96px;
 }
 .hud-log p + p {
@@ -266,4 +266,18 @@ textarea:focus {
     font-size: 11px;
     letter-spacing: 0;
   }
+}
+
+/* Worn, muted finish (early-2000s engine UI). */
+.hud-bar > div {
+  filter: saturate(0.7) brightness(0.9);
+  background-image: repeating-linear-gradient(90deg, rgb(0 0 0 / 0.14) 0 2px, transparent 2px 7px);
+}
+.hud-minimap {
+  image-rendering: pixelated;
+  border: 2px solid #3a372d;
+  box-shadow: inset 0 0 6px #000;
+  max-height: 96px;
+  object-fit: contain;
+  background: #0b0c0b;
 }
