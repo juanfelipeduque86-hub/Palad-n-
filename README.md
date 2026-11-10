@@ -1,69 +1,54 @@
 # Paladin
 
-Compañero de conversación para aclarar lo que tienes entre manos: un proyecto que no avanza, algo que
-estudias, una decisión. Paladin pregunta por lo que le cuentas, resume lo que entiende, acepta correcciones
-y solo propone un paso pequeño si tú lo pides.
+Compañero guerrero en pixel art para razonar, descubrir, imaginar y explorar. Interfaz editorial en marfil.
 
-> **Estado: prototipo local con reglas, no una IA.** La conversación la genera un motor determinista en
-> español (`src/conversation/`). Reconoce temas y expresiones concretas; cuando no entiende algo, lo dice.
-> La interfaz lo indica siempre con la etiqueta «Prototipo local · sin IA».
+> **Todo es local y escrito a mano. No hay IA.** Paladin no genera contenido, no mantiene conversaciones abiertas
+> y no evalúa la calidad de ideas libres. La app lo indica con la etiqueta «Contenido local · sin IA».
 
-## Stack
+## Las tres disciplinas y las aventuras
+
+| Modo | Qué hace | Qué comprueba Paladin |
+|---|---|---|
+| **I · Lucha** (razonamiento) | 30 retos de lógica, deducción, patrones, palabras, números y pensamiento lateral. Pistas progresivas, reintentos, «no sé por dónde empezar», explicación con confirmación, «otro diferente». Dificultad elegida por la persona: nunca sube sola. | Compara la respuesta con la solución, variantes válidas y trampas habituales (con su explicación concreta). |
+| **II · Pociones** (curiosidad) | 16 datos con contexto, fuente y grado de certeza (establecido / aproximado / debatido). Predicción opcional, preguntas de seguimiento con respuesta escrita, datos relacionados y cuaderno. | Nada que puntuar: solo se descubre. |
+| **III · Encantamientos** (creatividad) | 16 retos de asociación, usos inesperados, «¿y si…?», microrrelatos, invenciones y replanteamientos. Grimorio persistente. | Solo reglas explícitas (palabras exactas, palabras obligatorias, ideas por línea, letra inicial). Después muestra otros enfoques posibles; nunca dice que una idea es mejor. |
+| **IV · Aventuras** | Mazmorras jugables en pixel art: movimiento (teclado, cruceta, deslizar), niebla de guerra, llaves, puertas, palancas, rejas, bloques sobre placas de presión, deshacer y reinicio. Puertas rúnicas (Lucha), fuentes (Pociones) y altares (Encantamientos) aparecen dentro. Estado persistente y reanudable. | El motor aplica las reglas del juego. |
+
+Las mazmorras están verificadas con un solucionador automático (búsqueda en anchura sobre el motor real):
+*La Cripta del Umbral* se completa en 67 movimientos (69 con la gema) y *El Jardín de Piedra* en 47 (52).
+
+## Arte
+
+El guerrero (64×64) y los tiles (16×16) se dibujan en código con un pequeño rasterizador (`src/lib/pixel.ts`):
+materiales con tres tonos, luz desde arriba a la izquierda y contorno automático. Se muestran con `image-rendering: pixelated`
+a escala entera.
+
+## Stack y scripts
 
 React 19 · Vite 6 · TypeScript estricto · Tailwind CSS 4 · Framer Motion 12. Sin backend.
 
 ```bash
 npm install
-npm run dev        # desarrollo
-npm run typecheck
-npm run build      # typecheck + build de producción (PWA con service worker)
+npm run dev
+npm run build   # typecheck + build de producción (PWA con service worker)
 ```
 
-## Cómo funciona la conversación
-
-Bucle: **preguntar → escuchar → entender → repreguntar sobre lo dicho → aclarar juntos → paso opcional**.
-
-- `extract.ts` saca de cada mensaje lo reconocible: de qué se trata (app, novela, examen, mudanza…), qué
-  parte cuesta (diseño, contenido, memorizar…), detalles (colores, distribución, el final…), qué lo complica,
-  límites de tiempo, opciones de una decisión, correcciones («no es X, en realidad es Y») y cambios de tema.
-- `engine.ts` mantiene lo que entiende (`Understanding`), registra qué preguntó para no repetirlo y elige la
-  siguiente pregunta según lo que falta. Cuando una respuesta no encaja en lo esperado, guarda tus palabras
-  tal cual y te avisa de cómo las interpretó.
-- Con suficiente contexto muestra un resumen provisional, corregible punto por punto. Después ofrece
-  direcciones (seguir explorando, entender por qué pasa, ver opciones, decidir, un paso pequeño o parar) sin
-  imponer ninguna. Los pasos son editables y se pueden descartar; guardar uno no encola otro.
-- Los temas se pueden pausar y retomar. Las conversaciones y acciones guardadas viven solo en `localStorage`
-  (`paladin:conversations:v1`), con recuperación si los datos están dañados.
-
-### Límites conocidos
-
-- No entiende lenguaje libre en general: solo los patrones programados, en español.
-- No responde preguntas de conocimiento general ni tiene conexión a internet.
-- Las lecturas («entender por qué pasa») y opciones salen de plantillas, adaptadas con tus palabras.
-
-## Pasar a una IA real
-
-`ConversationEngine` (en `src/conversation/types.ts`) define el contrato: `start`, `respond`,
-`beginCorrection`, `resume`, `stepOutcome`. Un motor basado en un modelo de lenguaje podría implementarlo
-llamando a un endpoint propio. Requisitos:
-
-- **Servidor**: una función serverless o backend que guarde la clave de API. La clave nunca puede ir en el
-  navegador ni en el repositorio. GitHub Pages no sirve para esto (solo archivos estáticos).
-- **Privacidad**: los mensajes saldrían del dispositivo hacia el proveedor del modelo.
-- **Coste**: se paga por tokens. Como referencia, Claude Opus 5.5 cuesta 4 $ por millón de tokens de entrada
-  y 20 $ por millón de salida; un mensaje típico de esta app rondaría 1–2 céntimos de dólar.
+Progreso en `localStorage` (`paladin:progress:v1`), con recuperación por secciones si algo está dañado.
 
 ## Estructura
 
 ```
 src/
-  conversation/  types, text, extract, content, engine, storage
-  hooks/         useConversations
+  art/          palette, warrior (64×64), tiles (16×16)
+  adventure/    engine (puro), maps, render
+  content/      riddles, facts, prompts
+  lib/          pixel (rasterizador), answers, progress, motion
+  hooks/        useProgress
   components/
-    chat/        ChatHeader, ContextStrip, MessageBubble, ChipBar, Composer, Welcome, Typing
-    sheets/      UnderstandingSheet, HistorySheet, AboutSheet
-    paladin/     PaladinSprite
-    ui/          Icon, IconButton, Sheet, SheetHeader, Segmented, Field, Toast
-  lib/           motion
-  App.tsx
+    home/ lucha/ pociones/ encantamientos/ aventuras/ modes/ ui/
 ```
+
+## Con una IA real
+
+Conversaciones abiertas o comentarios sobre ideas libres requerirían un servidor propio con la clave de API (nunca en
+el navegador), enviar los textos al proveedor y asumir un coste por uso. No está integrado.

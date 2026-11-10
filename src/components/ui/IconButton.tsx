@@ -6,7 +6,7 @@ interface IconButtonProps {
   icon: IconName;
   label: string;
   onClick: () => void;
-  /** active = mint fill + dark icon; inactive = raised surface + light icon. */
+  /** active = accent fill + light icon; inactive = paper surface + ink icon. */
   active?: boolean;
   size?: 'sm' | 'md' | 'lg';
   filledIcon?: boolean;
@@ -38,8 +38,8 @@ export function IconButton({
       transition={press}
       className={`grid shrink-0 place-items-center rounded-full transition-colors duration-200 ${SIZE[size]} ${
         active
-          ? 'bg-mint text-mint-ink hover:bg-mint-strong'
-          : `${tone === 'card' ? 'bg-card' : 'bg-raised'} text-text hover:bg-track`
+          ? 'bg-accent text-accent-ink hover:bg-accent-strong'
+          : `${tone === 'card' ? 'bg-card border border-line' : 'bg-raised'} text-text hover:bg-track`
       } ${className}`}
     >
       <Icon name={icon} size={ICON[size]} filled={filledIcon} />

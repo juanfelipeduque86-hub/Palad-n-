@@ -17,7 +17,7 @@ export function SheetHeader({ id, title, subtitle, onBack, onClose, leading, act
       {onBack && <IconButton icon="back" label="Atrás" onClick={onBack} size="sm" />}
       {leading}
       <div className="min-w-0 flex-1">
-        <h2 id={id} className="truncate text-[19px] leading-tight font-semibold">
+        <h2 id={id} className="truncate font-serif text-[21px] leading-tight font-semibold">
           {title}
         </h2>
         {subtitle && <p className="truncate text-[13px] text-sub">{subtitle}</p>}

@@ -22,7 +22,11 @@ export type IconName =
   | 'back'
   | 'chevron'
   | 'undo'
-  | 'clock';
+  | 'clock'
+  | 'map'
+  | 'bulb'
+  | 'eye'
+  | 'bookmark';
 
 /** Builds a closed gear outline on the 24px grid. */
 function gearPath(): string {
@@ -72,6 +76,10 @@ const PATHS: Record<IconName, string[]> = {
   chevron: ['M9 5l7 7-7 7'],
   undo: ['M9 7 5 11l4 4', 'M5 11h9a5 5 0 0 1 0 10h-2'],
   clock: ['M20.25 12a8.25 8.25 0 1 1-16.5 0a8.25 8.25 0 0 1 16.5 0Z', 'M12 7.5V12l3 2'],
+  map: ['M3.5 6.5 9 4l6 2.5 5.5-2.5v13L15 19.5 9 17l-5.5 2.5Z', 'M9 4v13', 'M15 6.5v13'],
+  bulb: ['M9 17.5h6', 'M10 20.5h4', 'M12 3.5a5.5 5.5 0 0 0-3.2 10c.8.6 1.2 1.4 1.2 2.3v1.7h4v-1.7c0-.9.4-1.7 1.2-2.3A5.5 5.5 0 0 0 12 3.5Z'],
+  eye: ['M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z', 'M14.8 12a2.8 2.8 0 1 1-5.6 0a2.8 2.8 0 0 1 5.6 0Z'],
+  bookmark: ['M6.5 3.5h11v17L12 16.5l-5.5 4Z'],
   spark: ['M12 3.5v4', 'M12 16.5v4', 'M3.5 12h4', 'M16.5 12h4', 'M7 7l1.8 1.8', 'M15.2 15.2 17 17', 'M17 7l-1.8 1.8', 'M8.8 15.2 7 17'],
 };
 

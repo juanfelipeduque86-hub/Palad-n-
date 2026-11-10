@@ -38,7 +38,7 @@ export function Sheet({ open, onClose, labelledBy, tall = false, viewKey = 'view
             type="button"
             aria-label="Cerrar panel"
             tabIndex={-1}
-            className="absolute inset-0 bg-black/55"
+            className="absolute inset-0 bg-text/30"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -49,7 +49,7 @@ export function Sheet({ open, onClose, labelledBy, tall = false, viewKey = 'view
             role="dialog"
             aria-modal="true"
             aria-labelledby={labelledBy}
-            className={`relative mx-2 mb-2 flex w-full max-w-[420px] flex-col overflow-hidden rounded-[32px] bg-card shadow-float ${
+            className={`relative mx-2 mb-2 flex w-full max-w-[420px] flex-col overflow-hidden rounded-[28px] border border-line bg-card shadow-float ${
               tall ? 'h-[90dvh]' : 'max-h-[88dvh]'
             }`}
             initial={{ y: 40, opacity: 0 }}

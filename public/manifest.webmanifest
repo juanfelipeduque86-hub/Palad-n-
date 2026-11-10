@@ -1,13 +1,13 @@
 {
   "name": "Paladin",
   "short_name": "Paladin",
-  "description": "Un compañero de conversación para aclarar lo que tienes entre manos.",
+  "description": "Compañero guerrero para razonar, descubrir, imaginar y explorar.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0B0F0E",
-  "theme_color": "#0B0F0E",
+  "background_color": "#F4EFE4",
+  "theme_color": "#F4EFE4",
   "icons": [
     { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

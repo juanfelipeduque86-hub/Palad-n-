@@ -29,4 +29,4 @@ export function Field({ label, hint, group = false, children }: FieldProps) {
 }
 
 export const inputClass =
-  'w-full rounded-[18px] bg-raised px-4 text-[15px] text-text placeholder:text-faint outline-none transition-shadow focus:ring-2 focus:ring-mint/60';
+  'w-full rounded-[16px] border border-line bg-card px-4 text-[15px] text-text placeholder:text-faint outline-none transition-shadow focus:ring-2 focus:ring-accent/50';
