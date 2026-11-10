@@ -1,6 +1,8 @@
 /* Paladin service worker: offline shell + runtime cache (no remote data). */
-const CACHE = 'paladin-v1';
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon.svg'];
+const CACHE = 'paladin-v2';
+const BASE = new URL('./', self.location.href).href;
+const SHELL = ['', 'index.html', 'manifest.webmanifest', 'icons/icon.svg'].map((p) => BASE + p);
+const INDEX = BASE + 'index.html';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)));
@@ -31,10 +33,10 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('/index.html', copy));
+          caches.open(CACHE).then((c) => c.put(INDEX, copy));
           return res;
         })
-        .catch(() => caches.match('/index.html').then((r) => r || Response.error())),
+        .catch(() => caches.match(INDEX).then((r) => r || Response.error())),
     );
     return;
   }
