@@ -19,7 +19,7 @@ export function EncantamientosView({ api, onBack }: { api: ProgressApi; onBack: 
 
   return (
     <div>
-      <ModeHeader numeral="III · Creatividad" title="Encantamientos" subtitle="Imaginación, asociaciones y soluciones inventivas. Caben muchas respuestas." onBack={onBack} />
+      <ModeHeader numeral="III · Creatividad" title="Encantamientos" subtitle="Lo que escribes aquí no mancha. Lo que ofreces en un altar, sí." onBack={onBack} />
       <div className="mb-4 flex gap-2">
         <Button variant={tab === 'write' ? 'primary' : 'secondary'} onClick={() => setTab('write')} className="h-9 text-[13px]">
           Crear

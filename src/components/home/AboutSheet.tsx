@@ -19,7 +19,7 @@ export function AboutSheet({ storageOk, onClose, onReset }: { storageOk: boolean
           Los acertijos, datos, retos creativos y mazmorras están escritos y diseñados de antemano. No hay IA: Paladin no genera contenido, no conversa libremente y no evalúa la calidad de tus ideas.
         </Section>
         <Section title="Qué sí comprueba">
-          En Lucha compara tu respuesta con la solución y variantes previstas. En Encantamientos solo revisa reglas explícitas (número de palabras, palabras obligatorias, ideas por línea). En Aventuras, el juego aplica sus propias reglas.
+          En Lucha compara tu respuesta con la solución y variantes previstas. En Encantamientos solo revisa reglas explícitas (número de palabras, palabras obligatorias, ideas por línea). En Aventuras, el juego aplica sus propias reglas. La Mancha sube con cada rito (altar, fuente, sello) y no baja nunca. Veda, la escribana, es texto escrito de antemano que cambia según tu Mancha: no conversa.
         </Section>
         <Section title="Progreso">
           {storageOk

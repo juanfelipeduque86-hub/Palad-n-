@@ -2,6 +2,10 @@ import type { AdventureState } from '../adventure/engine';
 import type { ChallengeKind, Level } from '../content/riddles';
 
 const KEY = 'paladin:progress:v1';
+export const MANCHA_MAX = 7;
+
+/** Every rite leaves a mark. There is no way to remove one. */
+export const stain = (p: Progress, n = 1): Progress => ({ ...p, mancha: Math.min(MANCHA_MAX, p.mancha + n) });
 
 export interface SolvedInfo {
   at: string;
@@ -30,6 +34,8 @@ export interface Progress {
   pociones: { read: string[]; saved: string[]; currentId: string | null; topic: string };
   encantamientos: { entries: CreativeEntry[]; currentId: string | null; drafts: Record<string, string> };
   adventures: Record<string, AdventureState>;
+  /** Corruption from rites. 0–7. It only ever goes up. */
+  mancha: number;
 }
 
 export const emptyProgress = (): Progress => ({
@@ -38,6 +44,7 @@ export const emptyProgress = (): Progress => ({
   pociones: { read: [], saved: [], currentId: null, topic: 'all' },
   encantamientos: { entries: [], currentId: null, drafts: {} },
   adventures: {},
+  mancha: 0,
 });
 
 type Rec = Record<string, unknown>;
@@ -99,6 +106,7 @@ export function loadProgress(): Progress {
       pociones: { read: strArr(p.read), saved: strArr(p.saved), currentId: strOrNull(p.currentId), topic: typeof p.topic === 'string' ? p.topic : 'all' },
       encantamientos: { entries, currentId: strOrNull(e.currentId), drafts },
       adventures,
+      mancha: typeof v.mancha === 'number' && Number.isFinite(v.mancha) ? Math.max(0, Math.min(MANCHA_MAX, Math.floor(v.mancha))) : 0,
     };
   } catch {
     return base;

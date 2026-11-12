@@ -281,3 +281,61 @@ textarea:focus {
   object-fit: contain;
   background: #0b0c0b;
 }
+
+/* ------------------------------------------------------------------
+   Sober pass: restricted, sick palette; fewer RPG-panel flourishes.
+   ------------------------------------------------------------------ */
+:root {
+  --color-accent: #c9c2b4;
+  --color-accent-strong: #ddd6c8;
+  --color-gold: #8f8a6a;
+  --color-ok: #7d8560;
+  --color-lav: #7d7a70;
+  --color-line-strong: #3a372d;
+}
+.font-serif {
+  color: #c9c2b4;
+  text-shadow: none;
+}
+.font-pixel,
+.font-pixel.text-gold {
+  color: #8f8f7a;
+}
+button.bg-accent,
+div.bg-accent {
+  background-image: none;
+  background-color: #c9c2b4;
+  border: 1px solid #000;
+  box-shadow: none;
+}
+button.border,
+.h-9.w-9,
+.h-11.w-11,
+.h-12.w-12,
+.hud-slot {
+  border-width: 1px;
+  background: #0d0d0f;
+  box-shadow: none;
+  color: #c9c2b4;
+}
+.hud-slot:hover {
+  border-color: #c9c2b4;
+  color: #c9c2b4;
+}
+.bg-card.border,
+section.border,
+article.border {
+  border-width: 1px;
+  box-shadow: none;
+}
+.hud-frame {
+  border-width: 1px;
+  box-shadow: none;
+}
+.hud-bar {
+  border-width: 1px;
+  border-color: #3a372d;
+}
+.hud-log {
+  color: #b3ab98;
+}

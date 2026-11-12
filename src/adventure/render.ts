@@ -7,6 +7,7 @@ export const VIEW = 9;
 const OBJECT: Partial<Record<Cell, Sprite>> = {
   key: TILES.key,
   gem: TILES.gem,
+  gemSealed: TILES.block,
   door: TILES.door,
   doorOpen: TILES.doorOpen,
   gate: TILES.gate,

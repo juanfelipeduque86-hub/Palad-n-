@@ -4,6 +4,7 @@ import { MAPS } from '../../adventure/maps';
 import { CHALLENGES } from '../../content/riddles';
 import { FACTS } from '../../content/facts';
 import { PROMPTS } from '../../content/prompts';
+import { MANCHA_MAX } from '../../lib/progress';
 import type { ProgressApi } from '../../hooks/useProgress';
 import { Icon, type IconName } from '../ui/Icon';
 import { MiniMap } from './MiniMap';
@@ -20,10 +21,28 @@ interface HomeProps {
 }
 
 const MODES: Array<{ id: Exclude<ModeId, 'aventuras'>; numeral: string; title: string; kind: string; line: string; icon: IconName }> = [
-  { id: 'lucha', numeral: 'I', title: 'Lucha', kind: 'Razonamiento', line: 'Acertijos, deducción, lógica y patrones, con pistas.', icon: 'sword' },
+  { id: 'lucha', numeral: 'I', title: 'Disputa', kind: 'Razonamiento', line: 'Razonar contra lo escrito. No mancha.', icon: 'sword' },
   { id: 'pociones', numeral: 'II', title: 'Pociones', kind: 'Curiosidad', line: 'Datos con contexto y fuente, y preguntas para tirar del hilo.', icon: 'flask' },
   { id: 'encantamientos', numeral: 'III', title: 'Encantamientos', kind: 'Creatividad', line: 'Asociaciones e ideas inventivas, sin una única respuesta.', icon: 'spark' },
 ];
+
+/**
+ * Veda, the scribe who keeps the logbook. Scripted: her voice depends only on the Mancha level.
+ * She notes everything, then omits, then writes about you in the third person, then stops.
+ */
+function vedaLines(mancha: number, solved: number, clean: number, read: number, ideas: number, maps: number): string[] {
+  const tally = `${solved} disputas${solved ? ` (${clean} sin ayuda)` : ''}, ${read} datos, ${ideas} páginas, ${maps} descensos.`;
+  if (mancha === 0) return ['Veda anota. No levanta la vista.', `Consta: ${tally}`, 'Mancha: ninguna. También lo he apuntado.'];
+  if (mancha === 1) return ['Veda anota. Tarda más que antes.', `Consta: ${tally}`, 'Una marca. La he apuntado. No la he subrayado.'];
+  if (mancha <= 3) return ['Veda ha dejado de escribir. Te mira las manos.', `Consta: ${solved} disputas, ${read} datos.`, 'No he anotado lo demás. Prefiero que no conste.'];
+  if (mancha <= 5)
+    return [
+      'Veda escribe sentada más lejos.',
+      `«El paladín lleva ${mancha} marcas. Resolvió ${solved} disputas. No pregunta de dónde le llegan las pistas.»`,
+      'Ya no te lee lo que apunta.',
+    ];
+  return ['El cuaderno está cerrado. Veda tiene las manos encima.', `«${mancha} marcas.» Es lo último que escribió.`, 'No se ha ido. Eso es todo lo que puedes decir.'];
+}
 
 function HudBar({ label, value, total, color }: { label: string; value: number; total: number; color: string }) {
   const pct = total ? Math.round((value / total) * 100) : 0;
@@ -39,7 +58,7 @@ function HudBar({ label, value, total, color }: { label: string; value: number; 
       >
         <div className="h-full" style={{ width: `${pct}%`, background: color }} />
       </div>
-      <span className="w-[92px] shrink-0 font-pixel text-[15px] leading-none">
+      <span className="w-[96px] shrink-0 font-pixel text-[15px] leading-none">
         {label} {value}/{total}
       </span>
     </div>
@@ -55,6 +74,8 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
   const tried = new Set(progress.encantamientos.entries.map((e) => e.promptId)).size;
   const inProgress = MAPS.find((m) => progress.adventures[m.id] && !progress.adventures[m.id]?.completed);
   const completedMaps = MAPS.filter((m) => progress.adventures[m.id]?.completed).length;
+  const mancha = progress.mancha;
+  const veda = vedaLines(mancha, solved, cleanSolves, read, ideas, completedMaps);
   const miniMap = inProgress ?? MAPS.find((m) => progress.adventures[m.id]) ?? MAPS[0]!;
   const pctExplored = inProgress ? Math.round(exploredRatio(inProgress, progress.adventures[inProgress.id]!) * 100) : 0;
 
@@ -76,11 +97,10 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
       {/* Bottom HUD: status bars + action slots, message log, adventure panel */}
       <div className="mt-1 grid gap-1 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)_minmax(0,4fr)]">
         <section className="hud-frame bg-card p-3" aria-label="Estado y acciones">
-          <div className="flex flex-col gap-1.5">
-            <HudBar label="Lucha" value={solved} total={CHALLENGES.length} color="#9b1c1c" />
-            <HudBar label="Pocio." value={read} total={FACTS.length} color="#2b4f9e" />
-            <HudBar label="Encan." value={tried} total={PROMPTS.length} color="#3f7d2c" />
-          </div>
+          <HudBar label="Mancha" value={mancha} total={MANCHA_MAX} color="#7a2a1c" />
+          <p className="mt-1.5 font-pixel text-[14px] leading-none">
+            Disputas {solved}/{CHALLENGES.length} · Datos {read}/{FACTS.length} · Páginas {tried}/{PROMPTS.length}
+          </p>
           <div className="mt-3 grid grid-cols-4 gap-1.5">
             {MODES.map((m) => (
               <motion.button key={m.id} type="button" onClick={() => onOpen(m.id)} whileTap={{ scale: 0.94 }} transition={press} className="hud-slot" aria-label={`${m.title}: ${m.kind}`}>
@@ -95,12 +115,11 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
           </div>
         </section>
 
-        <section className="hud-frame hud-log bg-black p-3" aria-label="Bitácora">
-          <p>Tu compañero de armas aguarda.</p>
-          <p>
-            Bitácora: {solved} acertijos{solved ? ` (${cleanSolves} sin pistas)` : ''}, {read} datos, {ideas} ideas, {completedMaps} mazmorras.
-          </p>
-          <p>{inProgress ? `${inProgress.title} sigue abierta: ${pctExplored}% explorado.` : 'Elige una disciplina o entra en una mazmorra.'}</p>
+        <section className="hud-frame hud-log bg-black p-3" aria-label="Bitácora de Veda">
+          {veda.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+          <p>{inProgress ? `${inProgress.title} sigue abierta: ${pctExplored}% expuesto.` : 'Las tumbas no se van a cerrar solas.'}</p>
         </section>
 
         <section className="hud-frame flex flex-col justify-between gap-2 bg-card p-3" aria-label="Aventura">

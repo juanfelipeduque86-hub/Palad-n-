@@ -13,6 +13,8 @@ interface ChallengeCardProps {
   onAnother?: () => void;
   /** Label for the "another" action (in a rune door it means a different riddle). */
   anotherLabel?: string;
+  /** Corruption level: changes whose voice the hints come in, and how many Veda still gives. */
+  mancha?: number;
 }
 
 type Feedback = { kind: 'correct'; note?: string } | { kind: 'trap'; note: string } | { kind: 'wrong' } | null;
@@ -21,7 +23,10 @@ type Feedback = { kind: 'correct'; note?: string } | { kind: 'trap'; note: strin
  * One reasoning challenge: answer, progressive hints, retries and a full explanation.
  * The answer is never shown until the user finds it or asks for the explanation.
  */
-export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother, anotherLabel = 'Otro diferente' }: ChallengeCardProps) {
+export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother, anotherLabel = 'Otro diferente', mancha = 0 }: ChallengeCardProps) {
+  // At 4+ marks Veda withholds the first hint (if there is more than one).
+  const withheld = mancha >= 4 && c.hints.length > 1;
+  const hintList = withheld ? c.hints.slice(1) : c.hints;
   const [input, setInput] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [hints, setHints] = useState(0);
@@ -142,9 +147,9 @@ export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother,
 
       {hints > 0 && (
         <ol className="mt-4 flex flex-col gap-2">
-          {c.hints.slice(0, hints).map((h, i) => (
+          {hintList.slice(0, hints).map((h, i) => (
             <li key={h} className="flex gap-3 rounded-[16px] border border-dashed border-line px-3.5 py-2.5 text-[14px] leading-snug">
-              <span className="shrink-0 pt-0.5 font-pixel text-[10px] font-medium whitespace-nowrap text-gold">{startHint && i === 0 ? 'INICIO' : `PISTA ${i + 1}`}</span>
+              <span className="shrink-0 pt-0.5 font-pixel text-[10px] font-medium whitespace-nowrap text-gold">{mancha >= 2 ? 'YA LO SABÍAS' : startHint && i === 0 ? 'INICIO' : `PISTA ${i + 1}`}</span>
               <span>{h}</span>
             </li>
           ))}
@@ -159,13 +164,15 @@ export function ChallengeCard({ challenge: c, solvedBefore, onSolved, onAnother,
         </div>
       )}
 
+      {withheld && !solved && <p className="mt-4 text-[12px] text-faint">Veda ya no te da la primera pista.</p>}
+
       <div className="mt-5 flex flex-wrap gap-2">
         {!solved && (feedback?.kind === 'wrong' || feedback?.kind === 'trap') && (
           <Button onClick={retry} variant="primary">
             Lo intento otra vez
           </Button>
         )}
-        {!solved && hints < c.hints.length && (
+        {!solved && hints < hintList.length && (
           <Button icon="bulb" onClick={() => setHints((h) => h + 1)}>
             {hints === 0 ? 'Dame una pista' : 'Otra pista'}
           </Button>

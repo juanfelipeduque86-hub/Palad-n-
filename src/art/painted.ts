@@ -75,7 +75,8 @@ function pine(ctx: Ctx, r: () => number, cx: number, baseY: number, h: number, c
 function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
   const sway = Math.sin(t * 1.1) * 2.2 + Math.sin(t * 2.7) * 0.8;
   const breath = Math.sin(t * 1.6) * 0.7;
-  const top = feet - 98 + breath;
+  // Used, not heroic: shoulders sit lower and the head hangs.
+  const top = feet - 93 + breath;
   // Ground shadow.
   ctx.fillStyle = 'rgba(0,0,0,0.45)';
   ctx.beginPath();
@@ -107,9 +108,9 @@ function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
   ctx.stroke();
   // Cape with folds.
   const cg = ctx.createLinearGradient(x - 26, 0, x + 26, 0);
-  cg.addColorStop(0, '#22402f');
-  cg.addColorStop(0.45, '#1a3325');
-  cg.addColorStop(1, '#0d1c14');
+  cg.addColorStop(0, '#3a3d26');
+  cg.addColorStop(0.45, '#2b2e1c');
+  cg.addColorStop(1, '#14160d');
   ctx.fillStyle = cg;
   ctx.beginPath();
   ctx.moveTo(x - 17, top + 24);
@@ -120,6 +121,17 @@ function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
   ctx.quadraticCurveTo(x - 20 + sway, feet, x - 27 + sway, feet - 7);
   ctx.quadraticCurveTo(x - 25 + sway * 0.5, top + 60, x - 17, top + 24);
   ctx.fill();
+  // Torn hem and a faded band.
+  ctx.fillStyle = '#12140f';
+  for (const [hx, hw, hh] of [[-20, 5, 9], [-6, 4, 6], [7, 6, 11], [18, 4, 7]] as const) {
+    ctx.beginPath();
+    ctx.moveTo(x + hx + sway, feet + 1);
+    ctx.lineTo(x + hx + hw / 2 + sway, feet - hh);
+    ctx.lineTo(x + hx + hw + sway, feet + 1);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(120,118,92,0.16)';
+  ctx.fillRect(x - 22, top + 58, 44, 5);
   ctx.strokeStyle = 'rgba(0,0,0,0.35)';
   ctx.lineWidth = 1.4;
   for (const [dx, bend] of [[-14, -4], [-4, 2], [8, 4], [17, 6]] as const) {
@@ -128,7 +140,7 @@ function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
     ctx.quadraticCurveTo(x + dx + bend + sway * 0.6, top + 75, x + dx * 1.1 + sway, feet - 6);
     ctx.stroke();
   }
-  ctx.strokeStyle = 'rgba(120,150,125,0.22)';
+  ctx.strokeStyle = 'rgba(140,140,110,0.2)';
   ctx.beginPath();
   ctx.moveTo(x - 17, top + 28);
   ctx.quadraticCurveTo(x - 24, top + 60, x - 26, feet - 9);
@@ -138,10 +150,10 @@ function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
   ctx.translate(x - 2, top + 30);
   ctx.rotate(-0.06);
   const sg = ctx.createLinearGradient(-15, 0, 15, 0);
-  sg.addColorStop(0, '#356148');
-  sg.addColorStop(1, '#1d3a2a');
+  sg.addColorStop(0, '#4a4c30');
+  sg.addColorStop(1, '#26281a');
   ctx.fillStyle = sg;
-  ctx.strokeStyle = '#84703a';
+  ctx.strokeStyle = '#5c5638';
   ctx.lineWidth = 2.2;
   ctx.beginPath();
   ctx.moveTo(-15, 0);
@@ -152,14 +164,21 @@ function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
-  ctx.strokeStyle = '#9a8446';
+  // The cross: the upright remains; the arm was scraped down to the metal.
+  ctx.strokeStyle = '#8c8460';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, 6);
   ctx.lineTo(0, 36);
-  ctx.moveTo(-9, 15);
-  ctx.lineTo(9, 15);
   ctx.stroke();
+  ctx.strokeStyle = 'rgba(150,152,150,0.55)';
+  ctx.lineWidth = 0.8;
+  for (const dy of [-2, 0, 1.5, 3]) {
+    ctx.beginPath();
+    ctx.moveTo(-10, 15 + dy + 1);
+    ctx.lineTo(10, 14 + dy - 1);
+    ctx.stroke();
+  }
   ctx.restore();
   // Pauldrons.
   for (const sx of [-1, 1]) {
@@ -193,11 +212,11 @@ function paladin(ctx: Ctx, x: number, feet: number, t: number): void {
   ctx.moveTo(x - 9, top + 13);
   ctx.lineTo(x + 9, top + 13);
   ctx.stroke();
-  ctx.fillStyle = '#4c4563';
+  ctx.fillStyle = '#4a4a46';
   ctx.beginPath();
   ctx.moveTo(x - 1, top + 1);
-  ctx.quadraticCurveTo(x + 6, top - 12, x + 20 + sway * 0.8, top - 9 + Math.sin(t * 3.1) * 1.2);
-  ctx.quadraticCurveTo(x + 12 + sway * 0.4, top - 5, x + 8, top + 3);
+  ctx.quadraticCurveTo(x + 3, top - 6, x + 8 + sway * 0.5, top - 4 + Math.sin(t * 3.1) * 0.6);
+  ctx.quadraticCurveTo(x + 5 + sway * 0.2, top - 1, x + 4, top + 2);
   ctx.closePath();
   ctx.fill();
 }
@@ -269,9 +288,9 @@ export function createScene(): Scene {
       lc.fillRect(i * 3 - 1, y + 1, 4, 2 + r() * 5);
     }
   });
-  fog(lc, horizon - 60, 56, 0.24);
+  fog(lc, horizon - 60, 56, 0.1);
   ridge(lc, r, horizon, 58, '#474c50', '#3a3f42', 3.3);
-  fog(lc, horizon - 34, 40, 0.28);
+  fog(lc, horizon - 34, 40, 0.26);
   ridge(lc, r, horizon + 4, 24, '#2c312f', '#252a28', 5.1);
   lc.fillStyle = '#23272a';
   lc.fillRect(86, horizon - 30, 62, 14);
@@ -323,16 +342,64 @@ export function createScene(): Scene {
   const cg = fc.createLinearGradient(cx - 14, 0, cx + 14, 0);
   cg.addColorStop(0, '#7b7d77');
   cg.addColorStop(1, '#3f413d');
+  // The cross leans; its base does not. Geometry slightly wrong on purpose.
+  fc.save();
+  fc.translate(cx, 246);
+  fc.rotate(0.075);
   fc.fillStyle = cg;
-  fc.fillRect(cx - 5, 168, 10, 78);
-  fc.fillRect(cx - 19, 186, 38, 10);
+  fc.fillRect(-5, -78, 10, 78);
+  fc.fillRect(-21, -60, 36, 10);
+  fc.restore();
   fc.fillStyle = '#4a4c47';
   fc.fillRect(cx - 16, 246, 32, 8);
   fc.fillRect(cx - 24, 254, 48, 8);
+  // Black wax run down the base.
+  fc.fillStyle = '#0a0a0a';
+  fc.fillRect(cx - 10, 244, 12, 3);
+  fc.fillRect(cx - 8, 247, 3, 9);
+  fc.fillRect(cx - 2, 247, 2, 5);
+  fc.fillRect(cx + 9, 254, 3, 6);
+  // A smaller marker leaning the other way.
+  fc.save();
+  fc.translate(338, 250);
+  fc.rotate(-0.16);
+  fc.fillStyle = '#5c5e58';
+  fc.fillRect(-3, -34, 6, 34);
+  fc.fillRect(-10, -26, 20, 5);
+  fc.restore();
+  // A grave opened from inside: the earth lies outward, not piled by a spade.
+  fc.fillStyle = '#050505';
+  fc.beginPath();
+  fc.ellipse(118, 258, 26, 7, -0.05, 0, Math.PI * 2);
+  fc.fill();
+  for (let i = 0; i < 26; i += 1) {
+    const a = r() * Math.PI * 2;
+    const d = 26 + r() * 16;
+    fc.fillStyle = r() < 0.5 ? '#3a3324' : '#2a2519';
+    fc.beginPath();
+    fc.ellipse(118 + Math.cos(a) * d, 258 + Math.sin(a) * d * 0.3, 2 + r() * 4, 1.5 + r() * 2, 0, 0, Math.PI * 2);
+    fc.fill();
+  }
+  fc.fillStyle = '#56584f';
+  fc.save();
+  fc.translate(150, 262);
+  fc.rotate(0.5);
+  fc.fillRect(-14, -3, 28, 6);
+  fc.restore();
   for (let i = 0; i < 60; i += 1) {
     fc.fillStyle = `rgba(40,48,36,${0.2 + r() * 0.3})`;
     fc.fillRect(cx - 18 + r() * 36, 170 + r() * 88, 2, 2);
   }
+  // A sign scratched into the nearest rock.
+  fc.strokeStyle = 'rgba(190,188,170,0.5)';
+  fc.lineWidth = 0.8;
+  fc.beginPath();
+  fc.arc(300, 260, 5, 0, Math.PI * 2);
+  fc.moveTo(294, 256);
+  fc.lineTo(306, 265);
+  fc.moveTo(296, 265);
+  fc.lineTo(305, 255);
+  fc.stroke();
   pine(fc, r, 452, 268, 190, '#0f1512');
   pine(fc, r, 425, 250, 120, '#141b17');
   pine(fc, r, 20, 262, 110, '#121815');
@@ -355,11 +422,11 @@ export function createScene(): Scene {
 
   // --- Grade + vignette overlay, and a few grain frames to cycle.
   const [grade, gc] = layer();
-  gc.fillStyle = 'rgba(40,52,64,0.16)';
+  gc.fillStyle = 'rgba(52,54,36,0.2)';
   gc.fillRect(0, 0, W, H);
   const vg = gc.createRadialGradient(W / 2, H * 0.48, H * 0.35, W / 2, H / 2, W * 0.72);
   vg.addColorStop(0, 'rgba(0,0,0,0)');
-  vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+  vg.addColorStop(1, 'rgba(0,0,0,0.72)');
   gc.fillStyle = vg;
   gc.fillRect(0, 0, W, H);
   const grains = [0, 1, 2, 3].map(() => {
@@ -371,7 +438,7 @@ export function createScene(): Scene {
       img.data[i] = c;
       img.data[i + 1] = c;
       img.data[i + 2] = c;
-      img.data[i + 3] = Math.abs(v - 0.5) * 40;
+      img.data[i + 3] = Math.abs(v - 0.5) * 44;
     }
     gx.putImageData(img, 0, 0);
     return g;
@@ -384,9 +451,11 @@ export function createScene(): Scene {
       scroll(ctx, cloudsBack, t * 2.2);
       scroll(ctx, cloudsFront, t * 4.5);
       ctx.drawImage(land, 0, 0);
-      // Keep window: unsteady candlelight.
-      ctx.fillStyle = `rgba(214,170,96,${0.55 + 0.3 * Math.sin(t * 7.3) * Math.sin(t * 2.9)})`;
-      ctx.fillRect(103, horizon - 40, 2, 2);
+            // The keep's window is out. Now and then something passes behind it.
+      if (Math.sin(t * 0.37) > 0.985) {
+        ctx.fillStyle = 'rgba(122,42,28,0.7)';
+        ctx.fillRect(103, horizon - 40, 2, 2);
+      }
       // Water shimmer.
       for (const k of ripples) {
         const a = k.a * (0.55 + 0.45 * Math.sin(t * k.sp + k.ph));

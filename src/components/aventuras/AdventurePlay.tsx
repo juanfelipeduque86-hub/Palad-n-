@@ -20,6 +20,7 @@ import { CHALLENGES } from '../../content/riddles';
 import { FACTS } from '../../content/facts';
 import { PROMPTS } from '../../content/prompts';
 import type { ProgressApi } from '../../hooks/useProgress';
+import { stain } from '../../lib/progress';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { Sheet } from '../ui/Sheet';
@@ -149,7 +150,7 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
           </span>
         )}
         <span>
-          Explorado <b className="font-pixel font-medium text-text tabular-nums">{pct}%</b>
+          Expuesto <b className="font-pixel font-medium text-text tabular-nums">{pct}%</b>
         </span>
         <span>
           Pasos <b className="font-pixel font-medium text-text tabular-nums">{state.steps}</b>
@@ -184,9 +185,9 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
 
       {state.completed ? (
         <div className="mt-2 w-full rounded-[24px] border border-line bg-card p-5 text-center ">
-          <p className="font-pixel text-[11px] tracking-[0.14em] text-gold">AVENTURA COMPLETADA</p>
+          <p className="font-pixel text-[11px] tracking-[0.14em] text-gold">DESCENSO COMPLETO</p>
           <p className="mt-2 text-[15px] text-sub">
-            {state.steps} pasos · {pct}% explorado{total ? ` · ${gemsFound(map, state)}/${total} gemas` : ''}
+            {state.steps} pasos · {pct}% expuesto{total ? ` · ${gemsFound(map, state)}/${total} gemas` : ''}
           </p>
           <div className="mt-4 flex justify-center gap-2">
             <Button variant="primary" onClick={onExit}>
@@ -245,7 +246,7 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
             <SheetHeader
               id="encounter-title"
               title={encounter.kind === 'rune' ? 'Puerta rúnica' : encounter.kind === 'fountain' ? 'La fuente' : 'El altar'}
-              subtitle={encounter.kind === 'rune' ? 'Resuelve el acertijo para abrirla' : encounter.kind === 'fountain' ? 'Lee lo que hay grabado' : 'Ofrece una idea, la que sea'}
+              subtitle={encounter.kind === 'rune' ? 'Dispútala, o fuérzala' : encounter.kind === 'fountain' ? 'Lee el borde antes de beber' : 'Pide algo tuyo'}
               onClose={() => setEncounter(null)}
             />
             <div className="flex-1 overflow-y-auto px-4 pb-5">
@@ -253,6 +254,7 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
                 <ChallengeCard
                   challenge={riddle}
                   solvedBefore={progress.lucha.solved[riddle.id]}
+                  mancha={progress.mancha}
                   anotherLabel="Otro acertijo"
                   onAnother={() => setRiddleId(pickRiddle(riddle.id))}
                   onSolved={(info) => {
@@ -261,9 +263,27 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
                       lucha: { ...p.lucha, solved: p.lucha.solved[riddle.id] ? p.lucha.solved : { ...p.lucha.solved, [riddle.id]: { ...info, at: new Date().toISOString() } } },
                       adventures: { ...p.adventures, [map.id]: openRune(map, p.adventures[map.id] ?? state, encounter.at) },
                     }));
-                    setMessage('Las runas se apagan y la puerta se abre.');
+                    setMessage('La inscripción se borra sola. La puerta cede.');
                   }}
                 />
+              )}
+              {encounter.kind === 'rune' && !state.opened.includes(`${encounter.at.x},${encounter.at.y}`) && (
+                <div className="mt-4 border-t border-line pt-4">
+                  <p className="text-[13px] leading-relaxed text-sub">
+                    También puedes forzarla con un sello. No hace falta entender la inscripción. Deja marca, y la marca no se quita.
+                  </p>
+                  <div className="mt-3">
+                    <Button
+                      onClick={() => {
+                        update((p) => stain({ ...p, adventures: { ...p.adventures, [map.id]: openRune(map, p.adventures[map.id] ?? state, encounter.at) } }));
+                        setMessage('Trazas el sello. La puerta se abre hacia dentro. No volverá a cerrarse.');
+                        setEncounter(null);
+                      }}
+                    >
+                      Forzar con un sello · +1 Mancha
+                    </Button>
+                  </div>
+                </div>
               )}
               {encounter.kind === 'fountain' && fact && (
                 <>
@@ -280,12 +300,12 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
                       variant="primary"
                       disabled={state.fountainUsed}
                       onClick={() => {
-                        save(drinkFountain(map, state));
-                        setMessage('Bebes de la fuente y ves el plano de la mazmorra.');
+                        update((p) => stain({ ...p, adventures: { ...p.adventures, [map.id]: drinkFountain(map, p.adventures[map.id] ?? state) } }));
+                        setMessage('Bebes. Ahora conoces el trazado entero. El trazado también te conoce.');
                         setEncounter(null);
                       }}
                     >
-                      {state.fountainUsed ? 'Ya bebiste de la fuente' : 'Beber: revela el plano'}
+                      {state.fountainUsed ? 'Ya bebiste' : 'Beber: revela el trazado · +1 Mancha'}
                     </Button>
                   </div>
                 </>
@@ -298,18 +318,20 @@ export function AdventurePlay({ map, api, onExit }: AdventurePlayProps) {
                     savedCount={progress.encantamientos.entries.filter((x) => x.promptId === prompt.id).length}
                     onDraft={(text) => update((p) => ({ ...p, encantamientos: { ...p.encantamientos, drafts: { ...p.encantamientos.drafts, [prompt.id]: text } } }))}
                     onSave={(text) => {
+                      const first = !state.altarDone;
                       update((p) => ({
                         ...p,
+                        mancha: first ? Math.min(7, p.mancha + 1) : p.mancha,
                         encantamientos: {
                           ...p.encantamientos,
                           entries: [{ id: `g-${Date.now().toString(36)}`, promptId: prompt.id, text, at: new Date().toISOString() }, ...p.encantamientos.entries],
                         },
                         adventures: { ...p.adventures, [map.id]: completeAltar(p.adventures[map.id] ?? state) },
                       }));
-                      setMessage('La vela del altar crece y una reja se abre.');
+                      setMessage('La cera negra acepta lo que has escrito. No preguntes qué ha entendido.');
                     }}
                   />
-                  <p className="mt-3 text-[12px] text-faint">El altar acepta cualquier idea que guardes: no la puntúa.</p>
+                  <p className="mt-3 text-[12px] text-faint">El altar acepta lo que guardes y no lo juzga. La primera ofrenda en cada altar suma 1 de Mancha.</p>
                 </>
               )}
             </div>

@@ -5,7 +5,7 @@ export const MAPS: AdventureMap[] = [
   {
     id: 'cripta',
     title: 'La Cripta del Umbral',
-    blurb: 'Una cripta pequeña para empezar: una palanca, una llave, una puerta rúnica y una fuente que guarda un secreto.',
+    blurb: 'Una palanca, una llave, una puerta escrita en tu letra y una fuente que enseña el trazado a cambio de algo.',
     runeLevel: 1,
     rows: [
       '###############',
@@ -23,7 +23,7 @@ export const MAPS: AdventureMap[] = [
   {
     id: 'jardin',
     title: 'El Jardín de Piedra',
-    blurb: 'Un bloque que empujar hasta su placa, un altar que pide una idea y una gema escondida tras una reja.',
+    blurb: 'Una losa fuera de su sitio, un altar de cera negra y una reja sin cerradura. Las tumbas se abrieron desde dentro.',
     runeLevel: 2,
     rows: [
       '#############',

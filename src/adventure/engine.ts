@@ -85,7 +85,7 @@ export function initialState(m: AdventureMap): AdventureState {
     blocks: find(m, 'o'),
     steps: 0,
     completed: false,
-    log: ['Entras en la mazmorra.'],
+    log: ['Conoces este sitio. No has estado nunca.'],
   };
   return reveal(m, s);
 }
@@ -97,7 +97,7 @@ export const platesHeld = (m: AdventureMap, s: AdventureState): boolean => {
 
 /** What occupies a tile right now, after doors, keys and mechanisms are taken into account. */
 export type Cell =
-  | 'wall' | 'floor' | 'exit' | 'key' | 'gem' | 'door' | 'lever' | 'gate' | 'gateOpen' | 'block' | 'plate' | 'platePressed'
+  | 'wall' | 'floor' | 'exit' | 'key' | 'gem' | 'gemSealed' | 'door' | 'lever' | 'gate' | 'gateOpen' | 'block' | 'plate' | 'platePressed'
   | 'rune' | 'runeOpen' | 'fountain' | 'altar' | 'doorOpen';
 
 export function cellAt(m: AdventureMap, s: AdventureState, p: Pos): Cell {
@@ -112,7 +112,8 @@ export function cellAt(m: AdventureMap, s: AdventureState, p: Pos): Cell {
     case 'k':
       return s.taken.includes(k) ? 'floor' : 'key';
     case '*':
-      return s.taken.includes(k) ? 'floor' : 'gem';
+      // Drinking from the fountain seals what was not yet taken.
+      return s.taken.includes(k) ? 'floor' : s.fountainUsed ? 'gemSealed' : 'gem';
     case 'D':
       return s.opened.includes(k) ? 'doorOpen' : 'door';
     case 'q':
@@ -171,7 +172,7 @@ export function exploredRatio(m: AdventureMap, s: AdventureState): number {
 const withLog = (s: AdventureState, msg: string): AdventureState => ({ ...s, log: [msg, ...s.log].slice(0, 30) });
 
 export function move(m: AdventureMap, prev: AdventureState, dir: Dir): MoveResult {
-  if (prev.completed) return { state: prev, message: 'Ya completaste esta aventura.', interaction: null };
+  if (prev.completed) return { state: prev, message: 'Ya bajaste. No queda nada que mover.', interaction: null };
   let s: AdventureState = { ...prev, facing: dir };
   const d = DELTA[dir];
   const to = { x: s.pos.x + d.x, y: s.pos.y + d.y };
@@ -189,30 +190,32 @@ export function move(m: AdventureMap, prev: AdventureState, dir: Dir): MoveResul
     case 'door':
       if (s.keys > 0) {
         s = { ...s, keys: s.keys - 1, opened: [...s.opened, key(to)] };
-        return done(s, 'Usas la llave: la puerta se abre.');
+        return done(s, 'La llave entra sin resistencia. La cerradura la esperaba.');
       }
-      return done(s, 'Una puerta cerrada con llave. Tiene que haber una llave en algún sitio.');
+      return done(s, 'Cerrada. La cerradura está limpia: alguien la usa.');
     case 'gate':
-      return done(s, raw(m, to) === 'P' ? 'Una reja. Bajo el suelo se oye un mecanismo: quizá algo pesado lo active.' : raw(m, to) === 'T' ? 'Una reja que parece responder al altar.' : 'Una reja cerrada. Busca una palanca.');
+      return done(s, raw(m, to) === 'P' ? 'Una reja. Debajo hay un hueco donde falta peso. Una losa cabría.' : raw(m, to) === 'T' ? 'Esta reja no tiene cerradura. Tiene un altar.' : 'Una reja. El hierro baja hasta una palanca que no ves.');
+    case 'gemSealed':
+      return done(s, 'La gema está bajo una losa que antes no estaba. Lo que viste, te vio.');
     case 'lever': {
       s = { ...s, lever: !s.lever };
-      return done(s, s.lever ? 'Bajas la palanca. Se oye una reja abriéndose a lo lejos.' : 'Subes la palanca. Una reja vuelve a cerrarse.');
+      return done(s, s.lever ? 'Bajas la palanca. Lejos, algo se abre. No ha sonado a reja.' : 'Subes la palanca. Lo que se abrió, se cierra despacio.');
     }
     case 'rune':
-      return done(s, 'Una puerta con runas. Brillan cuando te acercas: plantean un acertijo.', { kind: 'rune', at: to });
+      return done(s, 'Una puerta escrita. La inscripción está en tu letra.', { kind: 'rune', at: to });
     case 'fountain':
-      return done(s, s.fountainUsed ? 'El agua de la fuente sigue clara.' : 'Una fuente antigua. Hay algo escrito en el borde.', { kind: 'fountain', at: to });
+      return done(s, s.fountainUsed ? 'El agua está quieta. Ya no refleja.' : 'Una fuente. El agua no refleja el techo: refleja el trazado.', { kind: 'fountain', at: to });
     case 'altar':
-      return done(s, s.altarDone ? 'El altar ya respondió a tu idea.' : 'Un altar con una vela. Pide una idea, no una respuesta correcta.', { kind: 'altar', at: to });
+      return done(s, s.altarDone ? 'La cera ya tiene lo que escribiste. No lo devuelve.' : 'Un altar con cera negra. No pide una respuesta. Pide algo tuyo.', { kind: 'altar', at: to });
     case 'block': {
       const beyond = { x: to.x + d.x, y: to.y + d.y };
-      if (!blockFits(cellAt(m, s, beyond))) return done(s, 'El bloque no se mueve: hay algo detrás.');
+      if (!blockFits(cellAt(m, s, beyond))) return done(s, 'La losa no cede. Hay algo al otro lado, apoyado.');
       const blocks = s.blocks.map((b) => (b.x === to.x && b.y === to.y ? beyond : b));
       const before = platesHeld(m, s);
       s = { ...s, blocks, pos: to, steps: s.steps + 1 };
       const after = platesHeld(m, s);
       s = reveal(m, s);
-      return done(s, !before && after ? 'El bloque encaja en la placa. Un mecanismo abre una reja.' : before && !after ? 'La placa se libera y una reja se cierra.' : 'Empujas el bloque.');
+      return done(s, !before && after ? 'La losa vuelve a su sitio. Estaba fuera porque algo la empujó desde abajo.' : before && !after ? 'Quitas la losa de su sitio. La reja cae.' : 'Arrastras la losa. Debajo, la tierra está removida.');
     }
     default:
       break;
@@ -220,26 +223,32 @@ export function move(m: AdventureMap, prev: AdventureState, dir: Dir): MoveResul
 
   if (!walkable(cell)) return done(s, null);
   s = reveal(m, { ...s, pos: to, steps: s.steps + 1 });
-  if (cell === 'key') return done({ ...s, keys: s.keys + 1, taken: [...s.taken, key(to)] }, 'Recoges una llave de bronce.');
-  if (cell === 'gem') return done({ ...s, taken: [...s.taken, key(to)] }, 'Encuentras una gema. No hace falta para salir, pero queda en tu bitácora.');
-  if (cell === 'exit') return done({ ...s, completed: true }, 'Bajas las escaleras: aventura completada.');
+  if (cell === 'key') return done({ ...s, keys: s.keys + 1, taken: [...s.taken, key(to)] }, 'La llave está tibia. Alguien la soltó hace poco.');
+  if (cell === 'gem') return done({ ...s, taken: [...s.taken, key(to)] }, 'Una gema. No abre nada. La guardas igual.');
+  if (cell === 'exit')
+    return done(
+      { ...s, completed: true },
+      exploredRatio(m, s) > 0.8
+        ? 'Bajas. Lo has visto casi todo. Casi todo te ha visto.'
+        : 'Bajas. Arriba, las tumbas quedan abiertas. Así las dejaste.',
+    );
   return done(s, null);
 }
 
 export function openRune(m: AdventureMap, s: AdventureState, at: Pos): AdventureState {
   if (raw(m, at) !== 'R' || s.opened.includes(key(at))) return s;
-  return withLog({ ...s, opened: [...s.opened, key(at)] }, 'Las runas se apagan y la puerta se abre.');
+  return withLog({ ...s, opened: [...s.opened, key(at)] }, 'La inscripción se borra sola. La puerta cede.');
 }
 
 export function drinkFountain(m: AdventureMap, s: AdventureState): AdventureState {
   if (s.fountainUsed) return s;
   // Reveals the layout of the whole map (not the hazards' state).
-  return withLog({ ...s, fountainUsed: true, explored: '1'.repeat(width(m) * height(m)) }, 'Bebes de la fuente y ves el plano de la mazmorra.');
+  return withLog({ ...s, fountainUsed: true, explored: '1'.repeat(width(m) * height(m)) }, 'Bebes. Ahora conoces el trazado entero. El trazado también te conoce.');
 }
 
 export function completeAltar(s: AdventureState): AdventureState {
   if (s.altarDone) return s;
-  return withLog({ ...s, altarDone: true }, 'La vela del altar crece y una reja se abre.');
+  return withLog({ ...s, altarDone: true }, 'La cera negra acepta lo que has escrito. No preguntes qué ha entendido.');
 }
 
 export const gemsTotal = (m: AdventureMap) => find(m, '*').length;

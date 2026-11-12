@@ -34,7 +34,7 @@ export function PaintedScene() {
       width={SCENE_W}
       height={SCENE_H}
       role="img"
-      aria-label="El Paladín de espaldas ante un lago de montaña bajo un cielo cerrado, con capa, yelmo y el escudo de la cruz a la espalda"
+      aria-label="El Paladín de espaldas en el Jardín de Piedra: capa rasgada, yelmo sin penacho y, a la espalda, un escudo con la cruz medio borrada. Cruces torcidas y una tumba abierta desde dentro."
       className="block h-auto w-full"
     />
   );

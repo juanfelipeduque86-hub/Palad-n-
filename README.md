@@ -5,6 +5,16 @@ Compañero guerrero en pixel art para razonar, descubrir, imaginar y explorar. I
 > **Todo es local y escrito a mano. No hay IA.** Paladin no genera contenido, no mantiene conversaciones abiertas
 > y no evalúa la calidad de ideas libres. La app lo indica con la etiqueta «Contenido local · sin IA».
 
+## Premisa
+
+El protagonista ya usó magia que no debía. El Jardín de Piedra es donde le esperan las consecuencias.
+
+- **Mancha (0–7):** sube con cada rito (primera ofrenda en un altar, beber de la fuente, forzar una puerta rúnica con un sello) y no baja nunca.
+- **Costes:** beber revela el trazado y sella la gema; forzar una puerta evita la disputa; con Mancha ≥ 2 las pistas cambian de voz y con ≥ 4 Veda retiene la primera.
+- **Veda, la escribana:** lleva la bitácora. Texto escrito de antemano con cinco estados según la Mancha: anota, tarda, omite, escribe sobre ti en tercera persona, cierra el cuaderno.
+- **Disputa** (antes Lucha): razonar contra lo escrito es lo único que no mancha.
+- **Expuesto** (antes Explorado): salir habiendo visto más del 80 % cambia el epitafio final.
+
 ## Las tres disciplinas y las aventuras
 
 | Modo | Qué hace | Qué comprueba Paladin |

@@ -40,14 +40,15 @@ export interface Challenge {
 
 export const CHALLENGES: Challenge[] = [
   {
-    id: 'r01', kind: 'logica', level: 1, title: 'Bloops y lazzies',
-    prompt: 'Todos los bloops son razzies. Todos los razzies son lazzies. ¿Todos los bloops son lazzies?',
+    id: 'r01', kind: 'logica', level: 1, title: 'Lo atado',
+    prompt: 'Todo lo invocado queda atado. Todo lo atado obedece. ¿Todo lo invocado obedece?',
     answer: { type: 'choice', options: ['Sí', 'No', 'No se puede saber'], correct: 0 },
     solution: 'Sí.',
-    hints: ['Imagina tres círculos, uno dentro de otro.', 'Si los bloops están dentro de los razzies, ¿dónde están los razzies?'],
-    explanation: 'Los bloops están dentro de los razzies, y los razzies dentro de los lazzies. Por tanto, los bloops también están dentro de los lazzies. Es un razonamiento transitivo: no hace falta saber qué son esas palabras.',
-    traps: [{ accept: ['No se puede saber'], note: 'Las palabras son inventadas, pero la estructura basta: no necesitas saber qué es un bloop para deducirlo.' }],
+    hints: ['Imagina tres círculos, uno dentro de otro.', 'Si lo invocado está dentro de lo atado, ¿dónde está lo atado?'],
+    explanation: 'Lo invocado está dentro de lo atado, y lo atado dentro de lo que obedece. La deducción es válida. Que las dos premisas sean ciertas es otra cuestión, y eran tuyas.',
+    traps: [{ accept: ['No se puede saber'], note: 'Se puede: la conclusión se sigue de las premisas. Lo que no se puede saber desde aquí es si las premisas eran verdad.' }],
   },
+
   {
     id: 'r02', kind: 'lateral', level: 1, title: 'Hierro y plumas',
     prompt: '¿Qué pesa más: un kilo de hierro o un kilo de plumas?',
@@ -58,14 +59,15 @@ export const CHALLENGES: Challenge[] = [
     traps: [{ accept: ['hierro', 'el hierro'], note: 'El hierro es más denso, pero aquí hay un kilo de cada cosa.' }],
   },
   {
-    id: 'r03', kind: 'deduccion', level: 2, title: 'Las tres cajas mal etiquetadas',
-    prompt: 'Hay tres cajas: «Manzanas», «Naranjas» y «Mixta». Todas las etiquetas están mal. Puedes sacar una sola fruta de una sola caja, sin mirar dentro. ¿De qué caja la sacas para poder corregir todas las etiquetas?',
-    answer: { type: 'text', accept: ['mixta', 'la mixta', 'caja mixta', 'la que dice mixta'] },
-    solution: 'De la caja etiquetada «Mixta».',
-    hints: ['Todas las etiquetas mienten. ¿Qué no puede contener la caja «Mixta»?', 'La caja «Mixta» solo tiene un tipo de fruta. Una fruta te dice cuál.'],
-    explanation: 'La caja «Mixta» no puede ser mixta, así que contiene un solo tipo. Si sacas una manzana, esa caja es la de manzanas. La caja «Naranjas» no puede tener naranjas ni (ya) manzanas: es la mixta. La que queda es la de naranjas.',
-    traps: [{ accept: ['manzanas', 'naranjas'], note: 'De esas cajas, una fruta no siempre basta: la caja «Manzanas» podría ser mixta o de naranjas, y una naranja no distingue entre ambas.' }],
+    id: 'r03', kind: 'deduccion', level: 2, title: 'Las tres lápidas',
+    prompt: 'Tres lápidas: «El que invocó», «El invocado» y «Ambos». Las tres mienten. Puedes abrir una sola tumba y sacar un solo hueso. ¿Cuál abres para saber qué hay en las tres?',
+    answer: { type: 'text', accept: ['ambos', 'la de ambos', 'la que dice ambos', 'tumba de ambos', 'lapida de ambos'] },
+    solution: 'La que dice «Ambos».',
+    hints: ['Las tres mienten. ¿Qué no puede haber bajo la lápida «Ambos»?', 'Bajo «Ambos» hay uno solo. Un hueso te dice cuál.'],
+    explanation: 'La lápida «Ambos» miente, así que debajo hay uno solo. Si el hueso es del que invocó, esa tumba es la suya. La lápida «El invocado» no puede cubrir al invocado ni, ya, al que invocó: cubre a ambos. La que queda es la del invocado.',
+    traps: [{ accept: ['el que invoco', 'la del que invoco', 'el invocado', 'la del invocado'], note: 'Bajo esas lápidas un hueso no basta: podría haber uno o dos cuerpos, y un solo hueso no distingue.' }],
   },
+
   {
     id: 'r04', kind: 'numerico', level: 2, title: 'Bate y pelota',
     prompt: 'Un bate y una pelota cuestan 1,10 € en total. El bate cuesta 1 € más que la pelota. ¿Cuánto cuesta la pelota?',
@@ -86,14 +88,15 @@ export const CHALLENGES: Challenge[] = [
     traps: [{ accept: ['100'], note: 'Más máquinas no alargan el tiempo: trabajan en paralelo.' }],
   },
   {
-    id: 'r06', kind: 'numerico', level: 2, title: 'El nenúfar',
-    prompt: 'Un nenúfar duplica su tamaño cada día. Tarda 48 días en cubrir todo el lago. ¿Cuántos días tarda en cubrir la mitad?',
+    id: 'r06', kind: 'numerico', level: 2, title: 'La mancha de la losa',
+    prompt: 'La mancha de la losa duplica su tamaño cada noche. La noche 48 la cubrirá entera. ¿Qué noche cubría la mitad?',
     answer: { type: 'number', value: 47 },
-    solution: '47 días.',
-    hints: ['Piensa hacia atrás desde el día 48.', 'Si el día 48 cubre todo y cada día se duplica, ¿cuánto cubría el día anterior?'],
-    explanation: 'Como se duplica cada día, el día anterior a cubrirlo todo cubría justo la mitad: el día 47.',
-    traps: [{ accept: ['24'], note: 'Dividir entre dos funciona con crecimientos lineales; este crecimiento se duplica cada día.' }],
+    solution: 'La noche 47.',
+    hints: ['Piensa hacia atrás desde la noche 48.', 'Si cada noche se duplica, ¿cuánto cubría la noche anterior a cubrirlo todo?'],
+    explanation: 'Si se duplica cada noche, la víspera de cubrirla entera cubría justo la mitad: la noche 47. Hasta la víspera parecía que quedaba tiempo.',
+    traps: [{ accept: ['24'], note: 'Dividir entre dos sirve cuando algo crece al mismo paso. Esto se duplica: casi todo ocurre al final.' }],
   },
+
   {
     id: 'r07', kind: 'patrones', level: 1, title: 'Duplicar',
     prompt: '2, 4, 8, 16, … ¿Qué número sigue?',
@@ -209,14 +212,15 @@ export const CHALLENGES: Challenge[] = [
     ambiguity: 'Este acertijo juega con la ambigüedad de la pregunta a propósito.',
   },
   {
-    id: 'r20', kind: 'logica', level: 1, title: 'Las ovejas',
-    prompt: 'Un granjero tiene 17 ovejas. Todas menos 9 se escapan. ¿Cuántas le quedan?',
+    id: 'r20', kind: 'logica', level: 1, title: 'Diecisiete tumbas',
+    prompt: 'En el Jardín hay 17 tumbas. Todas menos 9 están abiertas. ¿Cuántas siguen cerradas?',
     answer: { type: 'number', value: 9 },
     solution: '9.',
-    hints: ['«Todas menos 9» se escapan: ¿cuántas no se escapan?'],
-    explanation: 'Si todas menos 9 se escapan, las 9 restantes se quedan.',
-    traps: [{ accept: ['8'], note: '17 − 9 = 8 sería si se escaparan 9. La frase dice que se escapan todas excepto 9.' }],
+    hints: ['«Todas menos 9» están abiertas: ¿cuáles no lo están?'],
+    explanation: 'Si todas menos 9 están abiertas, las 9 restantes siguen cerradas. De momento.',
+    traps: [{ accept: ['8'], note: '17 − 9 = 8 son las abiertas. La pregunta es por las cerradas.' }],
   },
+
   {
     id: 'r21', kind: 'patrones', level: 2, title: 'Diferencias impares',
     prompt: '3, 6, 11, 18, 27, … ¿Qué número sigue?',
@@ -234,14 +238,15 @@ export const CHALLENGES: Challenge[] = [
     explanation: 'Cada término describe el anterior. 111221 son «tres unos, dos doses, un uno»: 31 22 11 → 312211.',
   },
   {
-    id: 'r23', kind: 'numerico', level: 2, title: 'El caracol',
-    prompt: 'Un caracol está en el fondo de un pozo de 10 metros. De día sube 3 metros y de noche resbala 2. ¿Cuántos días tarda en salir?',
+    id: 'r23', kind: 'numerico', level: 2, title: 'Lo que sube por el pozo',
+    prompt: 'Algo sube por un pozo de 10 metros. De día sube 3 metros; de noche resbala 2. ¿Cuántos días tarda en salir?',
     answer: { type: 'number', value: 8 },
     solution: '8 días.',
-    hints: ['Cada día completo avanza 1 metro neto, pero ojo con el último día.', '¿Dónde está al empezar el día en que sale?'],
-    explanation: 'Tras 7 días y 7 noches ha subido 7 metros. El octavo día sube 3 metros y llega a 10: sale antes de resbalar.',
-    traps: [{ accept: ['10'], note: 'Contar 1 metro por día olvida que el último día sube 3 metros y ya no resbala.' }],
+    hints: ['Cada día completo gana 1 metro, pero mira bien el último.', '¿A qué altura está al empezar el día en que sale?'],
+    explanation: 'Tras 7 días y 7 noches está a 7 metros. El octavo día sube 3 y llega al borde: ya no resbala. Sale dos días antes de lo que calcularías.',
+    traps: [{ accept: ['10'], note: 'Contar 1 metro por día olvida que el último día sube 3 y no vuelve a caer.' }],
   },
+
   {
     id: 'r24', kind: 'palabras', level: 1, title: 'Mal escrita',
     prompt: '¿Qué palabra se escribe mal en todos los diccionarios?',
@@ -294,14 +299,15 @@ export const CHALLENGES: Challenge[] = [
     explanation: 'Cada número se multiplica por el siguiente entero: ×2, ×3, ×4, ×5 y ahora ×6. 120 × 6 = 720 (son los factoriales).',
   },
   {
-    id: 'r30', kind: 'deduccion', level: 3, title: 'Calcetines a oscuras',
-    prompt: 'En un cajón a oscuras hay 10 calcetines negros y 10 blancos, mezclados. ¿Cuántos tienes que sacar, como mínimo, para estar seguro de tener un par del mismo color?',
+    id: 'r30', kind: 'deduccion', level: 3, title: 'Velas a oscuras',
+    prompt: 'En el arcón hay 10 velas negras y 10 blancas. No ves nada. ¿Cuántas tienes que sacar, como mínimo, para estar seguro de tener dos del mismo color?',
     answer: { type: 'number', value: 3 },
     solution: '3.',
-    hints: ['Piensa en el peor caso posible.', 'Con dos podrías tener uno de cada color. ¿Y con el tercero?'],
-    explanation: 'Con dos, en el peor caso tienes uno negro y uno blanco. El tercero coincide con uno de ellos, seguro.',
-    traps: [{ accept: ['11', '2'], note: '11 serviría para asegurar dos de un color concreto. Para un par de cualquier color bastan 3.' }],
+    hints: ['Piensa en el peor caso.', 'Con dos podrías tener una de cada. ¿Y con la tercera?'],
+    explanation: 'Con dos, en el peor caso tienes una negra y una blanca. La tercera coincide con una de ellas. El rito pide dos iguales; no dice de qué color.',
+    traps: [{ accept: ['11', '2'], note: '11 asegurarían dos de un color concreto. Para dos de cualquier color bastan 3.' }],
   },
+
 ];
 
 export type Verdict =

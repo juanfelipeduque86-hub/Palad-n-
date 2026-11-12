@@ -50,7 +50,7 @@ export function LuchaView({ api, onBack }: LuchaViewProps) {
 
   return (
     <div>
-      <ModeHeader numeral="I · Razonamiento" title="Lucha" subtitle="Acertijos, deducción, lógica y patrones. Tú eliges la dificultad." onBack={onBack} />
+      <ModeHeader numeral="I · Razonamiento" title="Disputa" subtitle="Razonar contra lo que está escrito en la piedra. Es lo único aquí que no mancha." onBack={onBack} />
       <div className="flex flex-col gap-2 pb-4">
         <ChipRow<Level | 0>
           label="Dificultad"
@@ -73,6 +73,7 @@ export function LuchaView({ api, onBack }: LuchaViewProps) {
         <ChallengeCard
           challenge={current}
           solvedBefore={l.solved[current.id]}
+          mancha={progress.mancha}
           onSolved={(info) =>
             update((p) => ({
               ...p,

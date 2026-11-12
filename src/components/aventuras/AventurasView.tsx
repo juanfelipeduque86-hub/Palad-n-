@@ -23,7 +23,7 @@ export function AventurasView({ api, onBack, onPlay }: { api: ProgressApi; onBac
               <p className="mt-1 text-[14px] leading-relaxed text-sub">{m.blurb}</p>
               {s && (
                 <p className="mt-2 text-[12px] text-faint">
-                  {s.steps} pasos · {pct}% explorado · {gemsFound(m, s)}/{gemsTotal(m)} gemas
+                  {s.steps} pasos · {pct}% expuesto · {gemsFound(m, s)}/{gemsTotal(m)} gemas
                 </p>
               )}
               <div className="mt-4">
