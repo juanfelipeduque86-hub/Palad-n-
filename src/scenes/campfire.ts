@@ -11,11 +11,17 @@ const find = (name: string): string | null => {
 
 /** Static base frame (required for the zone to appear). */
 export const CAMPFIRE_BASE = find('campfire_scene_base.png');
-/** Original GIF (optional). Only the FIRE region of it is shown, over the static base. */
+/** Original GIF (optional). If present, its fire region replaces the generated flames. */
 export const CAMPFIRE_GIF = find('campfire_scene.gif');
 
+/** Size of one art pixel in image pixels (2 = the PNG was exported at 2×). */
+export const ART_SCALE = 2;
+
 /**
- * Fire region as fractions of the image (0–1), measured from the top-left corner.
- * Adjust to the asset; open the app with `?firebox` to see the region outlined.
+ * Region that gets animated, as fractions of the image (0–1) from the top-left corner.
+ * Open the app with `?firebox` to see it outlined.
  */
-export const FIRE = { x: 0.4, y: 0.52, w: 0.2, h: 0.3 };
+export const FIRE = { x: 0.38, y: 0.24, w: 0.22, h: 0.58 };
+
+/** The flames inside the image: bottom-centre point, width and height, as fractions of the image. */
+export const FLAME = { x: 0.492, y: 0.775, w: 0.075, h: 0.3 };
