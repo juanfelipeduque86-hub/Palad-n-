@@ -8,7 +8,9 @@ import { MANCHA_MAX } from '../../lib/progress';
 import type { ProgressApi } from '../../hooks/useProgress';
 import { Icon, type IconName } from '../ui/Icon';
 import { MiniMap } from './MiniMap';
+import { CampfireScene } from './CampfireScene';
 import { PaintedScene } from './PaintedScene';
+import { CAMPFIRE_BASE } from '../../scenes/campfire';
 import { press } from '../../lib/motion';
 
 export type ModeId = 'lucha' | 'pociones' | 'encantamientos' | 'aventuras';
@@ -80,7 +82,7 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
   const pctExplored = inProgress ? Math.round(exploredRatio(inProgress, progress.adventures[inProgress.id]!) * 100) : 0;
 
   return (
-    <div className="pb-4">
+    <div className={`pb-4 ${CAMPFIRE_BASE ? 'zone-campfire' : ''}`}>
       <header className="flex items-center justify-between pt-1 pb-3">
         <p className="font-serif text-[20px] leading-none font-semibold">Paladin</p>
         <button type="button" onClick={onAbout} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line-strong px-3 text-[12px] font-medium text-sub">
@@ -91,7 +93,7 @@ export function Home({ api, onOpen, onPlay, onAbout }: HomeProps) {
 
       {/* Scene viewport */}
       <div className="hud-frame overflow-hidden bg-black p-1">
-        <PaintedScene />
+        {CAMPFIRE_BASE ? <CampfireScene /> : <PaintedScene />}
       </div>
 
       {/* Bottom HUD: status bars + action slots, message log, adventure panel */}

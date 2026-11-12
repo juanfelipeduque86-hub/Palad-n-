@@ -339,3 +339,38 @@ article.border {
 .hud-log {
   color: #b3ab98;
 }
+
+/* ------------------------------------------------------------------
+   Campfire zone (only when the scene asset is present): panels and text
+   tuned to sit between the fire's orange and the night's cold blue.
+   ------------------------------------------------------------------ */
+.zone-campfire .hud-frame {
+  background-color: rgb(9 12 19 / 0.86);
+  background-image: none;
+  border-color: #1f2735;
+}
+.zone-campfire .hud-log {
+  background-color: rgb(6 8 13 / 0.9);
+  color: #d9c7a3; /* warm parchment: reads against blue, does not compete with the fire */
+}
+.zone-campfire .font-pixel {
+  color: #8996aa; /* cold slate for labels and numbers */
+}
+.zone-campfire .font-serif {
+  color: #e2d6bf;
+}
+.zone-campfire .hud-slot {
+  background: rgb(12 16 24 / 0.9);
+  border-color: #2a3446;
+  color: #d9c7a3;
+}
+.zone-campfire .hud-slot:hover {
+  border-color: #c8873c;
+  color: #e9b872;
+}
+.zone-campfire .hud-bar {
+  border-color: #2a3446;
+}
+.zone-campfire button.bg-accent {
+  background-color: #c9b48a;
+}
